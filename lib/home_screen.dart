@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, String>> imgList = [
     {'title': 'Oil paintings', 'image': 'assets/9.jpg'},
     {'title': 'Museums', 'image': 'assets/12.jpg'},
-    {'title': 'Wall arts', 'image': 'assets/8.jpg'},
+    {'title': 'Wall arts', 'image': 'assets/17.jpg'},
     {'title': 'Sculptures', 'image': 'assets/6.jpg'},
     {'title': 'Photography', 'image': 'assets/10.jpg'},
     {'title': 'Digital art', 'image': 'assets/11.jpg'},
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // Full screen image builder
               SizedBox(
-                height: 230, 
+                height: 230,
                 child: PageView.builder(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
@@ -129,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(height: 20),
-
 
               // NEW SECTION: Scrollable Asymmetric Image Grid
               Text(
@@ -256,94 +255,92 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 30),
 
-              // Another horizontal scroll section
-              Text(
-                'MORE COLLECTIONS',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                  letterSpacing: 1.2,
-                ),
-              ),
-
-             
-
-              const SizedBox(height: 100), // Space for bottom navigation
+              const SizedBox(height: 120), // Space for bottom navigation
             ],
           ),
         ),
       ),
-      floatingActionButton: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Colors.orange, Colors.deepOrange],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            print('FAB pressed');
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.add, color: Colors.white, size: 30),
-        ),
-      ),
+
+ 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      
+
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+          side: const BorderSide(color: Colors.orange, width: 2),
+        ),
+       
+      ),
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 6.0,
+        height: 70,
+        shape: CircularNotchedRectangle(),
+        color: const Color.fromARGB(221, 247, 126, 27),
+      
+        elevation: 10,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.home, color: Colors.white),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 20.0,
+                top: 10.0,
+                bottom: 10.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.shopping_cart, color: Colors.white),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 20.0,
+                top: 10.0,
+                bottom: 10.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.favorite, color: Colors.white),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.settings, color: Colors.white),
+                ],
+              ),
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.white,
-            selectedItemColor: Colors.orange,
-            unselectedItemColor: Colors.grey[400],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            elevation: 0,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-              BottomNavigationBarItem(icon: Icon(Icons.palette), label: ''),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.add, color: Colors.transparent),
-                label: '',
-              ),
-              BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-            ],
-          ),
         ),
       ),
     );
   }
+  // Add this method to your _HomeScreenState class
+
+  // Replace your _buildNavItem method with this:
 
   Widget _buildGalleryCard(Map<String, String> gallery) {
     return GestureDetector(
@@ -518,7 +515,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.favorite, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ],

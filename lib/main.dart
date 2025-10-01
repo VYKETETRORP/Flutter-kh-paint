@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 // import 'login.dart';
-
+import "form.dart";
 
 void main() {
   runApp(const MyProgram());
@@ -23,11 +23,10 @@ class MyProgram extends StatelessWidget {
       // ),
       // home: const LoginScreen(),
       home: const HomeScreen(),
-
-      
-
-
-
+      // home:  AddIllustrationForm (),
+      // routes: {
+      //   '/add-illustration': (context) => AddIllustrationForm(),
+      // },
     );
   }
 
