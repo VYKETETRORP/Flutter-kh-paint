@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:test_form/services/language_service.dart';
+import 'package:test_form/shop_screan.dart';
+import 'package:test_form/favorite_screen.dart';
+import 'package:test_form/login.dart';
+import 'package:test_form/setting_screen.dart';
+import 'package:test_form/translations/app_translations.dart';
+import 'widgets/bottom_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,37 +24,47 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final List<Map<String, String>> imgList = [
-    {'title': 'Oil paintings', 'image': 'assets/9.jpg'},
-    {'title': 'Museums', 'image': 'assets/12.jpg'},
-    {'title': 'Wall arts', 'image': 'assets/17.jpg'},
-    {'title': 'Sculptures', 'image': 'assets/6.jpg'},
-    {'title': 'Photography', 'image': 'assets/10.jpg'},
-    {'title': 'Digital art', 'image': 'assets/11.jpg'},
+  String _translate(String key){
+    try {
+      final languageService = context.watch<LanguageService>();
+      return AppTranslations.translate(key, languageService.currentLocale.languageCode);
+    } catch (e) {
+      return key;
+    }
+  }
+
+  List<Map<String, String>> get imgList => [
+    {'title': _translate('oil_paintings'), 'image': 'assets/9.jpg'},
+    {'title': _translate('museums'), 'image': 'assets/12.jpg'},
+    {'title': _translate('wall_arts'), 'image': 'assets/17.jpg'},
+    {'title': _translate('sculptures'), 'image': 'assets/6.jpg'},
+    {'title': _translate('photography'), 'image': 'assets/10.jpg'},
+    {'title': _translate('digital_art'), 'image': 'assets/11.jpg'},
   ];
 
-  final List<Map<String, String>> galleries = [
-    {'title': 'Oil paintings', 'image': 'assets/pic.jpg'},
-    {'title': 'Museums', 'image': 'assets/pic3.jpg'},
-    {'title': 'Wall arts', 'image': 'assets/pic4.jpg'},
-    {'title': 'Sculptures', 'image': 'assets/pic2.jpg'},
-    {'title': 'Photography', 'image': 'assets/pic6.jpg'},
-    {'title': 'Digital art', 'image': 'assets/pic5.jpg'},
+ List<Map<String, String>> get galleries => [
+    {'title': _translate('oil_paintings'), 'image': 'assets/pic.jpg'},
+    {'title': _translate('museums'), 'image': 'assets/pic3.jpg'},
+    {'title': _translate('wall_arts'), 'image': 'assets/pic4.jpg'},
+    {'title': _translate('sculptures'), 'image': 'assets/pic2.jpg'},
+    {'title': _translate('photography'), 'image': 'assets/pic6.jpg'},
+    {'title': _translate('digital_art'), 'image': 'assets/pic5.jpg'},
   ];
 
-  final List<Map<String, String>> fullScreenGalleries = [
-    {'title': 'Oil paintings', 'image': 'assets/1.jpg'},
-    {'title': 'Museums', 'image': 'assets/2.jpg'},
-    {'title': 'Wall arts', 'image': 'assets/3.jpg'},
-    {'title': 'Sculptures', 'image': 'assets/4.jpg'},
-    {'title': 'Photography', 'image': 'assets/5.jpg'},
-    {'title': 'Digital art', 'image': 'assets/1.jpeg'},
+  List<Map<String, String>> get fullScreenGalleries => [
+    {'title': _translate('oil_paintings'), 'image': 'assets/1.jpg'},
+    {'title': _translate('museums'), 'image': 'assets/2.jpg'},
+    {'title': _translate('wall_arts'), 'image': 'assets/3.jpg'},
+    {'title': _translate('sculptures'), 'image': 'assets/4.jpg'},
+    {'title': _translate('photography'), 'image': 'assets/5.jpg'},
+    {'title': _translate('digital_art'), 'image': 'assets/1.jpeg'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color.fromARGB(255, 237, 241, 246),
+  
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
@@ -66,7 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.grey[50],
+        // backgroundColor: Colors.grey[50],
+              backgroundColor: const Color.fromARGB(255, 237, 241, 246),
+
         elevation: 0,
         centerTitle: false,
       ),
@@ -132,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // NEW SECTION: Scrollable Asymmetric Image Grid
               Text(
-                'FEATURED ARTWORK',
+                'curated_galleries',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -262,7 +282,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
- 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -270,72 +289,13 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         elevation: 0,
-      
 
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
           side: const BorderSide(color: Colors.orange, width: 2),
         ),
-       
       ),
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 6.0,
-        height: 70,
-        shape: CircularNotchedRectangle(),
-        color: const Color.fromARGB(221, 247, 126, 27),
-      
-        elevation: 10,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home, color: Colors.white),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 20.0,
-                top: 10.0,
-                bottom: 10.0,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.shopping_cart, color: Colors.white),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 20.0,
-                top: 10.0,
-                bottom: 10.0,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.favorite, color: Colors.white),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.settings, color: Colors.white),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 0)
     );
   }
   // Add this method to your _HomeScreenState class
