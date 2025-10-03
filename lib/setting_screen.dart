@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'widgets/bottom_navigation.dart';
 import 'services/language_service.dart';
@@ -18,13 +17,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Controllers for text fields
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // Image picker instance
   final ImagePicker _picker = ImagePicker();
-  
+
   // Safe translation method
   String _translate(String key) {
     try {
@@ -43,8 +44,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // User profile data
-  File? _selectedImage; // Changed from String to File
-  String? userAvatarPath; // Keep track of selected image path
+  File? _selectedImage; // Changed from String to File for selected image
+  String userAvatar = 'assets/avatar.jpg'; // Keep original avatar path
   bool _obscureCurrentPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -68,33 +69,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  // Request permissions
-  Future<bool> _requestPermissions() async {
-    Map<Permission, PermissionStatus> permissions = await [
-      Permission.camera,
-      Permission.photos,
-    ].request();
-
-    return permissions[Permission.camera] == PermissionStatus.granted ||
-           permissions[Permission.photos] == PermissionStatus.granted;
-  }
-
   // Pick image from camera
   Future<void> _pickImageFromCamera() async {
     try {
-      final hasPermission = await _requestPermissions();
-      if (!hasPermission) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_translate('camera_permission_denied') ?? 'Camera permission denied'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-        return;
-      }
-
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 512,
@@ -105,23 +82,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
-          userAvatarPath = image.path;
         });
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_translate('avatar_updated_camera') ?? 'Profile picture updated from camera'),
+            const SnackBar(
+              content: Text('Profile picture updated from camera'),
               backgroundColor: Colors.green,
             ),
           );
         }
       }
     } catch (e) {
+      debugPrint('Camera error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error taking photo: ${e.toString()}'),
+          const SnackBar(
+            content: Text('Unable to access camera. Please check permissions.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -132,19 +109,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Pick image from gallery
   Future<void> _pickImageFromGallery() async {
     try {
-      final hasPermission = await _requestPermissions();
-      if (!hasPermission) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_translate('gallery_permission_denied') ?? 'Gallery permission denied'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-        return;
-      }
-
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 512,
@@ -155,23 +119,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
-          userAvatarPath = image.path;
         });
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_translate('avatar_updated_gallery') ?? 'Profile picture updated from gallery'),
+            const SnackBar(
+              content: Text('Profile picture updated from gallery'),
               backgroundColor: Colors.green,
             ),
           );
         }
       }
     } catch (e) {
+      debugPrint('Gallery error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error selecting image: ${e.toString()}'),
+          const SnackBar(
+            content: Text('Unable to access gallery. Please check permissions.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -183,12 +147,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _useDefaultAvatar() {
     setState(() {
       _selectedImage = null;
-      userAvatarPath = null;
     });
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_translate('avatar_updated_default') ?? 'Avatar updated to default'),
+      const SnackBar(
+        content: Text('Avatar updated to default'),
         backgroundColor: Colors.green,
       ),
     );
@@ -312,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: Column(
         children: [
-          // Avatar with improved image handling
+          // Avatar with image handling
           Stack(
             children: [
               Container(
@@ -417,6 +380,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Updated _changeAvatar method with working image picker
   void _changeAvatar() {
     showModalBottomSheet(
       context: context,
@@ -444,17 +408,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.all(20),
+                const Padding(
+                  padding: EdgeInsets.all(20),
                   child: Text(
-                    _translate('change_profile_picture') ?? 'Change Profile Picture',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    'Change Profile Picture',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
 
                 ListTile(
                   leading: const Icon(Icons.camera_alt, color: Colors.blue),
-                  title: Text(_translate('take_photo') ?? 'Take Photo'),
+                  title: const Text('Take Photo'),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImageFromCamera();
@@ -463,7 +427,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 ListTile(
                   leading: const Icon(Icons.photo_library, color: Colors.green),
-                  title: Text(_translate('choose_from_gallery') ?? 'Choose from Gallery'),
+                  title: const Text('Choose from Gallery'),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImageFromGallery();
@@ -472,7 +436,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 ListTile(
                   leading: const Icon(Icons.person, color: Colors.orange),
-                  title: Text(_translate('use_default_avatar') ?? 'Use Default Avatar'),
+                  title: const Text('Use Default Avatar'),
                   onTap: () {
                     Navigator.pop(context);
                     _useDefaultAvatar();
@@ -488,36 +452,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // ... rest of your existing methods remain the same ...
-  
-  Widget _buildProfileStat(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.orange,
-          ),
-        ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-      ],
-    );
-  }
+  // ... Keep all your other existing methods exactly the same ...
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title.toUpperCase(),
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Colors.grey[600],
-        letterSpacing: 1.2,
-      ),
-    );
-  }
-
+  // Update preferences section with working language switching
   Widget _buildPreferencesSection() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -585,26 +522,94 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildPreferenceItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
+  // Updated language dialog with working functionality
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Consumer<LanguageService>(
+          builder: (context, languageService, child) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              title: Text(_translate('choose_language')),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: languageService.languages.length,
+                  itemBuilder: (context, index) {
+                    final languageKey = languageService.languages.keys
+                        .elementAt(index);
+                    final language = languageService.languages[languageKey]!;
+                    final isSelected =
+                        languageKey == languageService.currentLanguageKey;
+
+                    return ListTile(
+                      leading: Text(
+                        language['flag']!,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      title: Text(language['name']!),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () async {
+                        await languageService.changeLanguage(languageKey);
+                        Navigator.pop(dialogContext);
+
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_translate('language_changed')),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text(_translate("cancel")),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileStat(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.orange,
+          ),
         ),
-        child: Icon(icon, color: color),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title.toUpperCase(),
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Colors.grey[600],
+        letterSpacing: 1.2,
       ),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap,
     );
   }
 
@@ -835,6 +840,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildPreferenceItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color),
+      ),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
+  }
+
   Widget _buildAboutSection() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -963,68 +991,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(_translate('edit')),
             ),
           ],
-        );
-      },
-    );
-  }
-
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return Consumer<LanguageService>(
-          builder: (context, languageService, child) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              title: Text(_translate('choose_language')),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: languageService.languages.length,
-                  itemBuilder: (context, index) {
-                    final languageKey = languageService.languages.keys
-                        .elementAt(index);
-                    final language = languageService.languages[languageKey]!;
-                    final isSelected =
-                        languageKey == languageService.currentLanguageKey;
-
-                    return ListTile(
-                      leading: Text(
-                        language['flag']!,
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      title: Text(language['name']!),
-                      trailing: isSelected
-                          ? const Icon(Icons.check, color: Colors.green)
-                          : null,
-                      onTap: () async {
-                        await languageService.changeLanguage(languageKey);
-                        Navigator.pop(dialogContext);
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(_translate('language_changed')),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: Text(_translate("cancel")),
-                ),
-              ],
-            );
-          },
         );
       },
     );
