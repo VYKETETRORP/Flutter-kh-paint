@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'widgets/bottom_navigation.dart';
+import 'form.dart'; // Import your form file to access IllustrationStorage
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -9,65 +12,208 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  // Sample favorite items
-  final List<Map<String, dynamic>> favoriteItems = [
-    {
-      'title': 'Abstract Canvas Art',
-      'image': 'assets/9.jpg',
-      'category': 'Oil Paintings',
-      'price': '\$299',
-      'addedDate': 'Added 2 days ago',
-      'isFavorite': true,
-    },
-    {
-      'title': 'Modern Sculpture',
-      'image': 'assets/6.jpg',
-      'category': 'Sculptures',
-      'price': '\$599',
-      'addedDate': 'Added 1 week ago',
-      'isFavorite': true,
-    },
-    {
-      'title': 'Vintage Photography',
-      'image': 'assets/10.jpg',
-      'category': 'Photography',
-      'price': '\$199',
-      'addedDate': 'Added 3 days ago',
-      'isFavorite': true,
-    },
-    {
-      'title': 'Digital Masterpiece',
-      'image': 'assets/11.jpg',
-      'category': 'Digital Art',
-      'price': '\$149',
-      'addedDate': 'Added 1 day ago',
-      'isFavorite': true,
-    },
-    {
-      'title': 'Museum Collection',
-      'image': 'assets/12.jpg',
-      'category': 'Museums',
-      'price': '\$799',
-      'addedDate': 'Added 5 days ago',
-      'isFavorite': true,
-    },
-  ];
+  // Get storage instance
+  final IllustrationStorage _storage = IllustrationStorage();
+  
+  // List to track which items are marked as favorites
+  List<String> favoriteIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Load favorites - mark featured items as favorites automatically
+    _loadFavorites();
+  }
+
+  void _loadFavorites() {
+    final allIllustrations = _storage.getAllIllustrations();
+    setState(() {
+      favoriteIds = allIllustrations
+          .where((item) => item.isFeatured)
+          .map((item) => item.id)
+          .toList();
+    });
+  }
+
+  // Convert storage data to match your existing UI format
+  List<Map<String, dynamic>> get favoriteItems {
+    final allIllustrations = _storage.getAllIllustrations();
+    final favorites = allIllustrations
+        .where((item) => favoriteIds.contains(item.id))
+        .toList();
+
+    return favorites.map((item) {
+      return {
+        'id': item.id,
+        'title': item.title,
+        'imagePath': item.imagePath, // Real image path from form
+        'imageName': item.imageName, // Image name from form
+        'category': item.category,
+        'price': '\$${(100 + (item.title.length * 10))}',
+        'addedDate': _getTimeAgo(item.createdAt),
+        'isFavorite': true,
+        'description': item.description,
+        'originalItem': item, // Keep reference to original item
+      };
+    }).toList();
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inDays > 0) {
+      return 'Added ${difference.inDays} days ago';
+    } else if (difference.inHours > 0) {
+      return 'Added ${difference.inHours} hours ago';
+    } else if (difference.inMinutes > 0) {
+      return 'Added ${difference.inMinutes} minutes ago';
+    } else {
+      return 'Added just now';
+    }
+  }
+
+  // Add item to favorites
+  void _addToFavorites(String id) {
+    setState(() {
+      if (!favoriteIds.contains(id)) {
+        favoriteIds.add(id);
+      }
+    });
+  }
+
+  // Toggle favorite status
+  void _toggleFavorite(String id) {
+    if (favoriteIds.contains(id)) {
+      setState(() {
+        favoriteIds.remove(id);
+      });
+    } else {
+      _addToFavorites(id);
+    }
+  }
+
+  // Build image widget with proper handling
+ // Build image widget with proper handling
+Widget _buildImageWidget(Map<String, dynamic> item, {double? width, double? height}) {
+  final imagePath = item['imagePath'];
+  final imageName = item['imageName'];
+  
+  // If we have a real image path and not on web
+  if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+    final imageFile = File(imagePath);
+    if (imageFile.existsSync()) {
+      return Image.file(
+        imageFile,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholder(imageName, width: width, height: height);
+        },
+      );
+    }
+  }
+  
+  // Try to load as asset image for default illustrations
+  if (imageName != null) {
+    // For default illustrations, try to load from assets
+    return Image.asset(
+      'assets/images/$imageName',
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return _buildImagePlaceholder(imageName, width: width, height: height);
+      },
+    );
+  }
+  
+  // Fallback to placeholder
+  return _buildImagePlaceholder(imageName, width: width, height: height);
+}
+
+// Enhanced image placeholder with better visuals
+Widget _buildImagePlaceholder(String? imageName, {double? width, double? height}) {
+  return Container(
+    width: width,
+    height: height,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.purple[100]!,
+          Colors.purple[200]!,
+        ],
+      ),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Different icons based on content
+        Icon(
+          imageName != null ? Icons.image : Icons.add_photo_alternate,
+          size: width != null ? width * 0.35 : 35,
+          color: Colors.purple[600],
+        ),
+        if (imageName != null) ...[
+          SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              imageName.length > 15 ? '${imageName.substring(0, 12)}...' : imageName,
+              style: TextStyle(
+                fontSize: width != null ? (width * 0.12).clamp(8.0, 12.0) : 10,
+                color: Colors.purple[600],
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          // Show that it's from form data
+          Container(
+            margin: EdgeInsets.only(top: 4),
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.green[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              'FROM FORM',
+              style: TextStyle(
+                fontSize: 6,
+                color: Colors.green[800],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ] else ...[
+          SizedBox(height: 4),
+          Text(
+            'No Image',
+            style: TextStyle(
+              fontSize: width != null ? (width * 0.1).clamp(8.0, 10.0) : 8,
+              color: Colors.purple[600],
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
+
+
+  // Build image placeholder
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: const Icon(
-        //     Icons.arrow_back_ios,
-        //     color: Colors.pink,
-        //     size: 20,
-        //   ),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
         title: const Text(
           'My Favorites',
           style: TextStyle(
@@ -99,12 +245,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Add more favorites from the gallery!'),
-              backgroundColor: Colors.pink,
-            ),
-          );
+          _showAllIllustrationsDialog();
         },
         backgroundColor: Colors.pink,
         foregroundColor: Colors.white,
@@ -115,13 +256,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
         child: const Icon(Icons.favorite),
       ),
-  bottomNavigationBar: const CustomBottomNavigation(currentIndex: 2),
-
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 2),
     );
   }
 
-
   Widget _buildEmptyState() {
+    final totalItems = _storage.count;
+    
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40.0),
@@ -151,7 +292,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Start exploring our gallery and add items to your favorites to see them here.',
+              totalItems > 0
+                  ? 'You have $totalItems illustrations. Add some to favorites!'
+                  : 'Start exploring our gallery and add items to your favorites to see them here.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -162,7 +305,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                if (totalItems > 0) {
+                  _showAllIllustrationsDialog();
+                } else {
+                  Navigator.pop(context);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
@@ -175,9 +322,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              child: const Text(
-                'Explore Gallery',
-                style: TextStyle(
+              child: Text(
+                totalItems > 0 ? 'Browse Gallery' : 'Explore Gallery',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -190,6 +337,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Widget _buildFavoritesList() {
+    final favorites = favoriteItems;
+    
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -229,7 +378,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${favoriteItems.length} Favorite Items',
+                        '${favorites.length} Favorite Items',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -238,7 +387,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Your curated collection',
+                        'From ${_storage.count} total illustrations',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -269,9 +418,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           Expanded(
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
-              itemCount: favoriteItems.length,
+              itemCount: favorites.length,
               itemBuilder: (context, index) {
-                return _buildFavoriteCard(favoriteItems[index], index);
+                return _buildFavoriteCard(favorites[index], index);
               },
             ),
           ),
@@ -297,7 +446,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                // Image
+                // Image with proper handling
                 Container(
                   width: 80,
                   height: 80,
@@ -314,20 +463,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      item['image'],
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                    child: _buildImageWidget(item, width: 80, height: 80),
                   ),
                 ),
                 
@@ -397,7 +533,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        _removeFromFavorites(index);
+                        _removeFromFavorites(item['id']);
                       },
                       icon: const Icon(
                         Icons.favorite,
@@ -425,7 +561,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  void _removeFromFavorites(int index) {
+  void _removeFromFavorites(String id) {
+    final item = favoriteItems.firstWhere((item) => item['id'] == id);
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -441,7 +579,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ],
           ),
           content: Text(
-            'Are you sure you want to remove "${favoriteItems[index]['title']}" from your favorites?',
+            'Are you sure you want to remove "${item['title']}" from your favorites?',
           ),
           actions: [
             TextButton(
@@ -451,7 +589,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  favoriteItems.removeAt(index);
+                  favoriteIds.remove(id);
                 });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -496,7 +634,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       isScrollControlled: true,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.7,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -523,19 +661,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image
+                      // Image with proper handling
                       Container(
-                        height: 180,
+                        height: 200,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: Image.asset(
-                            item['image'],
-                            fit: BoxFit.cover,
-                          ),
+                          child: _buildImageWidget(item, height: 200),
                         ),
                       ),
                       
@@ -553,23 +688,61 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       
                       const SizedBox(height: 8),
                       
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.pink[100],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          item['category'],
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.pink[700],
-                            fontWeight: FontWeight.w600,
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.pink[100],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item['category'],
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.pink[700],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        ),
+                          if (item['imageName'] != null) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue[100],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.image,
+                                    size: 14,
+                                    color: Colors.blue[700],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item['imageName'].length > 15 
+                                        ? '${item['imageName'].substring(0, 12)}...'
+                                        : item['imageName'],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue[700],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       
                       const SizedBox(height: 16),
@@ -581,6 +754,27 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           color: Colors.grey[600],
                         ),
                       ),
+                      
+                      // Show description if available
+                      if (item['description'] != null && item['description'].isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Description',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          item['description'],
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
                       
                       const Spacer(),
                       
@@ -647,6 +841,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   void _showSearchDialog() {
+    String searchQuery = '';
+    
     showDialog(
       context: context,
       builder: (context) {
@@ -656,6 +852,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
           title: const Text('Search Favorites'),
           content: TextField(
+            onChanged: (value) {
+              searchQuery = value;
+            },
             decoration: InputDecoration(
               hintText: 'Search your favorite items...',
               prefixIcon: const Icon(Icons.search),
@@ -672,12 +871,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Search functionality coming soon!'),
-                    backgroundColor: Colors.pink,
-                  ),
-                );
+                _performSearch(searchQuery);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
@@ -686,6 +880,210 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               child: const Text('Search'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _performSearch(String query) {
+    if (query.isEmpty) return;
+    
+    final results = _storage.searchIllustrations(query);
+    final favoriteResults = results.where((item) => favoriteIds.contains(item.id)).toList();
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Text('Search Results for "$query"'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: favoriteResults.isEmpty
+                ? const Center(child: Text('No matching favorites found'))
+                : ListView.builder(
+                    itemCount: favoriteResults.length,
+                    itemBuilder: (context, index) {
+                      final item = favoriteResults[index];
+                      return ListTile(
+                        title: Text(item.title),
+                        subtitle: Text(item.category),
+                        leading: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: _buildImageWidget({
+                              'imagePath': item.imagePath,
+                              'imageName': item.imageName,
+                            }, width: 40, height: 40),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          final itemMap = {
+                            'id': item.id,
+                            'title': item.title,
+                            'imagePath': item.imagePath,
+                            'imageName': item.imageName,
+                            'category': item.category,
+                            'price': '\$${(100 + (item.title.length * 10))}',
+                            'addedDate': _getTimeAgo(item.createdAt),
+                            'isFavorite': true,
+                            'description': item.description,
+                            'originalItem': item,
+                          };
+                          _showItemDetails(itemMap);
+                        },
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAllIllustrationsDialog() {
+    final allIllustrations = _storage.getAllIllustrations();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Container(
+            width: double.infinity,
+            height: 500,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.collections, color: Colors.purple),
+                    const SizedBox(width: 8),
+                    Text(
+                      'All Illustrations (${allIllustrations.length})',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                Expanded(
+                  child: allIllustrations.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.inbox,
+                                size: 64,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'No illustrations yet',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: allIllustrations.length,
+                          itemBuilder: (context, index) {
+                            final illustration = allIllustrations[index];
+                            final isFavorite = favoriteIds.contains(illustration.id);
+                            
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              child: ListTile(
+                                leading: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: _buildImageWidget({
+                                      'imagePath': illustration.imagePath,
+                                      'imageName': illustration.imageName,
+                                    }, width: 50, height: 50),
+                                  ),
+                                ),
+                                title: Text(
+                                  illustration.title,
+                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(illustration.category),
+                                    if (illustration.description.isNotEmpty)
+                                      Text(
+                                        illustration.description.length > 30
+                                            ? '${illustration.description.substring(0, 30)}...'
+                                            : illustration.description,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (illustration.isFeatured)
+                                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                                    IconButton(
+                                      onPressed: () {
+                                        _toggleFavorite(illustration.id);
+                                        setState(() {});
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              isFavorite
+                                                  ? '${illustration.title} removed from favorites'
+                                                  : '${illustration.title} added to favorites',
+                                            ),
+                                            backgroundColor: isFavorite ? Colors.red : Colors.green,
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(
+                                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                                        color: Colors.pink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

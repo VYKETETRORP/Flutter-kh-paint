@@ -287,7 +287,7 @@ class _ShopScreenState extends State<ShopScreen> {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                     ),
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       child: Image.asset(
                         product['image'],

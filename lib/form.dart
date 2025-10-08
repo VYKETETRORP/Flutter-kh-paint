@@ -3,7 +3,210 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+// Data model for illustrations
+class Illustration {
+  final String id;
+  final String title;
+  final String description;
+  final String category;
+  final bool isFeatured;
+  final String? imagePath;
+  final String? imageName;
+  final DateTime createdAt;
+
+  Illustration({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.isFeatured,
+    this.imagePath,
+    this.imageName,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'category': category,
+      'isFeatured': isFeatured,
+      'imagePath': imagePath,
+      'imageName': imageName,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  static Illustration fromMap(Map<String, dynamic> map) {
+    return Illustration(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      category: map['category'],
+      isFeatured: map['isFeatured'],
+      imagePath: map['imagePath'],
+      imageName: map['imageName'],
+      createdAt: DateTime.parse(map['createdAt']),
+    );
+  }
+}
+
+// Global data storage class with default data
+class IllustrationStorage {
+  static final IllustrationStorage _instance = IllustrationStorage._internal();
+  factory IllustrationStorage() => _instance;
+  IllustrationStorage._internal() {
+    _initializeDefaultData();
+  }
+
+  final List<Illustration> _illustrations = [];
+  bool _defaultDataLoaded = false;
+
+  // Initialize with default sample data
+  void _initializeDefaultData() {
+    if (_defaultDataLoaded) return;
+    
+    final defaultIllustrations = [
+      Illustration(
+        id: 'default_001',
+        title: 'Sunset Symphony',
+        description: 'A breathtaking oil painting capturing the golden hour with vibrant oranges and purples dancing across the canvas. This masterpiece evokes feelings of serenity and wonder.',
+        category: 'Oil Paintings',
+        isFeatured: true,
+        imagePath: null,
+        imageName: 'sunset_symphony.jpg',
+        createdAt: DateTime.now().subtract(Duration(days: 5)),
+      ),
+      
+      Illustration(
+        id: 'default_002',
+        title: 'Modern Geometry',
+        description: 'Contemporary wall art featuring bold geometric patterns in navy blue and gold. Perfect for modern living spaces and office environments.',
+        category: 'Wall Arts',
+        isFeatured: true,
+        imagePath: null,
+        imageName: 'modern_geometry.jpg',
+        createdAt: DateTime.now().subtract(Duration(days: 3)),
+      ),
+      
+                                
+      
+     
+    ];
+
+    _illustrations.addAll(defaultIllustrations);
+    _defaultDataLoaded = true;
+    
+    print('🎨 Initialized with ${defaultIllustrations.length} default illustrations');
+    print('⭐ Featured items: ${defaultIllustrations.where((item) => item.isFeatured).length}');
+  }
+
+  // Add new illustration
+  void addIllustration(Illustration illustration) {
+    _illustrations.add(illustration);
+    print('✅ Added illustration: ${illustration.title}');
+    print('📊 Total illustrations: ${_illustrations.length}');
+  }
+
+  // Get all illustrations
+  List<Illustration> getAllIllustrations() => List.from(_illustrations);
+
+  // Get illustrations by category
+  List<Illustration> getIllustrationsByCategory(String category) {
+    return _illustrations.where((item) => item.category == category).toList();
+  }
+
+  // Get featured illustrations
+  List<Illustration> getFeaturedIllustrations() {
+    return _illustrations.where((item) => item.isFeatured).toList();
+  }
+
+  // Get illustration by ID
+  Illustration? getIllustrationById(String id) {
+    try {
+      return _illustrations.firstWhere((item) => item.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Remove illustration
+  bool removeIllustration(String id) {
+    final index = _illustrations.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      _illustrations.removeAt(index);
+      return true;
+    }
+    return false;
+  }
+
+  // Update illustration
+  bool updateIllustration(String id, Illustration updatedIllustration) {
+    final index = _illustrations.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      _illustrations[index] = updatedIllustration;
+      return true;
+    }
+    return false;
+  }
+
+  // Get count
+  int get count => _illustrations.length;
+
+  // Get categories with counts
+  Map<String, int> getCategoryCounts() {
+    final counts = <String, int>{};
+    for (final illustration in _illustrations) {
+      counts[illustration.category] = (counts[illustration.category] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  // Clear all data (including default data)
+  void clear() {
+    _illustrations.clear();
+    _defaultDataLoaded = false;
+  }
+
+  // Reset to default data only
+  void resetToDefault() {
+    _illustrations.clear();
+    _defaultDataLoaded = false;
+    _initializeDefaultData();
+  }
+
+  // Search illustrations
+  List<Illustration> searchIllustrations(String query) {
+    final lowercaseQuery = query.toLowerCase();
+    return _illustrations.where((item) {
+      return item.title.toLowerCase().contains(lowercaseQuery) ||
+             item.description.toLowerCase().contains(lowercaseQuery) ||
+             item.category.toLowerCase().contains(lowercaseQuery);
+    }).toList();
+  }
+
+  // Get summary statistics
+  Map<String, dynamic> getStatistics() {
+    final total = _illustrations.length;
+    final featured = _illustrations.where((item) => item.isFeatured).length;
+    final categories = getCategoryCounts();
+    
+    return {
+      'total': total,
+      'featured': featured,
+      'regular': total - featured,
+      'categories': categories,
+      'latestDate': _illustrations.isNotEmpty 
+          ? _illustrations.map((item) => item.createdAt).reduce((a, b) => a.isAfter(b) ? a : b)
+          : null,
+    };
+  }
+}
+
 class AddIllustrationForm extends StatefulWidget {
+  const AddIllustrationForm({super.key});
+
   @override
   _AddIllustrationFormState createState() => _AddIllustrationFormState();
 }
@@ -11,6 +214,7 @@ class AddIllustrationForm extends StatefulWidget {
 class _AddIllustrationFormState extends State<AddIllustrationForm> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+  final IllustrationStorage _storage = IllustrationStorage();
   
   String title = '';
   String description = '';
@@ -19,6 +223,18 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
   File? _selectedImage;
   String? _selectedImageName;
   bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Show initial data info
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final stats = _storage.getStatistics();
+      _showSuccessMessage(
+        'Welcome! ${stats['total']} illustrations loaded (${stats['featured']} featured)'
+      );
+    });
+  }
 
   // Pick image from gallery with better error handling
   Future<void> _pickImageFromGallery() async {
@@ -47,7 +263,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
           _selectedImageName = image.name.isNotEmpty ? image.name : 'selected_image.jpg';
         });
         
-        _showSuccessMessage('Image selected: ${_selectedImageName}');
+        _showSuccessMessage('Image selected: $_selectedImageName');
       } else {
         print('No image selected by user');
         _showInfoMessage('No image selected');
@@ -107,7 +323,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
     _showSuccessMessage('Sample artwork selected - ready to use!');
   }
 
-  // Show success message
+  // Show success message with data count
   void _showSuccessMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -166,6 +382,487 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
       ),
     );
   }
+
+  // Show data summary dialog with enhanced statistics
+  void _showDataSummary() {
+    final stats = _storage.getStatistics();
+    final categories = stats['categories'] as Map<String, int>;
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.analytics, color: Colors.purple),
+              SizedBox(width: 8),
+              Text('Gallery Statistics'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Overview stats
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.purple[50]!, Colors.purple[100]!],
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.palette, color: Colors.purple[600], size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Gallery Overview',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text('📊 Total Illustrations: ${stats['total']}'),
+                      Text('⭐ Featured: ${stats['featured']}'),
+                      Text('📁 Regular: ${stats['regular']}'),
+                      Text('📂 Categories: ${categories.length}'),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(height: 16),
+                
+                // Category breakdown
+                Text('Category Breakdown:', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                ...categories.entries.map((entry) => Container(
+                  margin: EdgeInsets.only(bottom: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(entry.key, style: TextStyle(fontSize: 14)),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.purple[200],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${entry.value}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.purple[800],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+                
+                SizedBox(height: 16),
+                
+                // Quick actions
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Quick Actions',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _showAllDataDialog();
+                              },
+                              icon: Icon(Icons.view_list, size: 16),
+                              label: Text('View All', style: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _showResetDialog();
+                              },
+                              icon: Icon(Icons.refresh, size: 16),
+                              label: Text('Reset', style: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Show reset dialog
+  void _showResetDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.warning, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('Reset Data'),
+            ],
+          ),
+          content: Text(
+            'This will remove all your custom illustrations and restore only the default sample data. This action cannot be undone.\n\nAre you sure you want to continue?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _storage.resetToDefault();
+                Navigator.pop(context);
+                setState(() {}); // Refresh UI
+                _showSuccessMessage('Data reset to default samples successfully!');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Reset'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Show all stored data
+  void _showAllDataDialog() {
+    final allIllustrations = _storage.getAllIllustrations();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Container(
+            width: double.infinity,
+            height: 500,
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.storage, color: Colors.purple),
+                    SizedBox(width: 8),
+                    Text(
+                      'All Illustrations (${allIllustrations.length})',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                
+                SizedBox(height: 16),
+                
+                Expanded(
+                  child: allIllustrations.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.inbox,
+                                size: 64,
+                                color: Colors.grey[400],
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'No illustrations yet',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+  itemCount: allIllustrations.length,
+  itemBuilder: (context, index) {
+    final illustration = allIllustrations[index];
+    final isDefault = illustration.id.startsWith('default_');
+    
+    return Card(
+      margin: EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: isDefault ? Colors.blue[100] : Colors.purple[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: _buildImageWidgetForList(illustration),
+          ),
+        ),
+        title: Text(
+          illustration.title,
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(illustration.category),
+                if (isDefault) ...[
+                  SizedBox(width: 8),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'DEFAULT',
+                      style: TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  SizedBox(width: 8),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'DEVICE',
+                      style: TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[800],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (illustration.description.isNotEmpty)
+              Text(
+                illustration.description.length > 50
+                    ? '${illustration.description.substring(0, 50)}...'
+                    : illustration.description,
+                style: TextStyle(fontSize: 12),
+              ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (illustration.imagePath != null)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.orange[200],
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'IMG',
+                  style: TextStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[800],
+                  ),
+                ),
+              ),
+            SizedBox(width: 4),
+            if (illustration.isFeatured)
+              Icon(Icons.star, color: Colors.amber),
+          ],
+        ),
+      ),
+    );
+  },
+),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Add this method inside _AddIllustrationFormState class
+
+// Build image widget for list display
+Widget _buildImageWidgetForList(Illustration illustration) {
+  final imagePath = illustration.imagePath;
+  final imageName = illustration.imageName;
+  final isDefault = illustration.id.startsWith('default_');
+  
+  // Priority 1: Real device image file
+  if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+    final imageFile = File(imagePath);
+    if (imageFile.existsSync()) {
+      return Image.file(
+        imageFile,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholderForList(imageName, isDefault);
+        },
+      );
+    }
+  }
+  
+  // Priority 2: Network image (for testing)
+  if (imageName != null && (imageName.startsWith('http') || imageName.startsWith('https'))) {
+    return Image.network(
+      imageName,
+      width: 50,
+      height: 50,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return _buildImagePlaceholderForList(imageName, isDefault);
+      },
+    );
+  }
+  
+  // Priority 3: Asset image
+  if (imageName != null && imageName.isNotEmpty) {
+    return Image.asset(
+      'assets/images/$imageName',
+      width: 50,
+      height: 50,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return _buildImagePlaceholderForList(imageName, isDefault);
+      },
+    );
+  }
+  
+  // Fallback placeholder
+  return _buildImagePlaceholderForList(imageName, isDefault);
+}
+
+// Build placeholder for list items
+Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
+  return Container(
+    width: 50,
+    height: 50,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: isDefault 
+            ? [Colors.blue[100]!, Colors.blue[200]!]
+            : [Colors.purple[100]!, Colors.purple[200]!],
+      ),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.image,
+          size: 20,
+          color: isDefault ? Colors.blue[600] : Colors.purple[600],
+        ),
+        if (imageName != null && imageName.isNotEmpty) ...[
+          SizedBox(height: 2),
+          Text(
+            imageName.length > 8 ? '${imageName.substring(0, 5)}...' : imageName,
+            style: TextStyle(
+              fontSize: 6,
+              color: isDefault ? Colors.blue[700] : Colors.purple[700],
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
+    ),
+  );
+}
 
   // Show fallback options when image picker fails
   void _showFallbackOptions() {
@@ -414,22 +1111,42 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Upload Image *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
+          Row(
+            children: [
+              Text(
+                'Upload Image *',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              Spacer(),
+              // Data count indicator
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.purple[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_storage.count} stored',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.purple[800],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 12),
           
           GestureDetector(
             onTap: _showImageSourceDialog,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+            child: Container(
               width: double.infinity,
-              height: _selectedImageName != null ? 250 : 150,
+              height: 180,
               decoration: BoxDecoration(
                 color: _selectedImageName != null 
                     ? Colors.purple[50] 
@@ -512,7 +1229,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
               child: Icon(
                 Icons.close,
                 color: Colors.white,
-                size: 18,
+                size: 16,
               ),
             ),
           ),
@@ -525,7 +1242,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
           child: GestureDetector(
             onTap: _showImageSourceDialog,
             child: Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.purple,
                 borderRadius: BorderRadius.circular(20),
@@ -541,7 +1258,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
               child: Icon(
                 Icons.edit,
                 color: Colors.white,
-                size: 18,
+                size: 16,
               ),
             ),
           ),
@@ -552,21 +1269,24 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
           Positioned(
             bottom: 10,
             left: 10,
+            right: 50,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                _selectedImageName!.length > 25 
-                    ? '${_selectedImageName!.substring(0, 22)}...'
+                _selectedImageName!.length > 20 
+                    ? '${_selectedImageName!.substring(0, 17)}...'
                     : _selectedImageName!,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ),
@@ -594,10 +1314,10 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(40),
               boxShadow: [
                 BoxShadow(
                   color: Colors.purple.withOpacity(0.3),
@@ -609,31 +1329,33 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
             ),
             child: Icon(
               Icons.check_circle,
-              size: 50,
+              size: 40,
               color: Colors.green,
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 12),
           Text(
             _selectedImageName ?? 'Selected Image',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.purple[800],
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 6),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.green[100],
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(15),
             ),
             child: Text(
               '✓ Ready to upload',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.green[700],
                 fontWeight: FontWeight.w600,
               ),
@@ -650,31 +1372,31 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(40),
           ),
           child: Icon(
             Icons.add_photo_alternate,
-            size: 50,
+            size: 40,
             color: Colors.grey[500],
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 12),
         Text(
           'Tap to upload image',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             color: Colors.grey[700],
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 6),
         Text(
-          'Sample (Recommended) • Gallery${!kIsWeb ? " • Camera" : ""}',
+          'Sample • Gallery${!kIsWeb ? " • Camera" : ""}',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             color: Colors.grey[500],
           ),
         ),
@@ -698,6 +1420,43 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
         backgroundColor: Colors.purple,
         elevation: 2,
         centerTitle: true,
+        actions: [
+          // View data button with enhanced badge  
+          IconButton(
+            onPressed: _showDataSummary,
+            icon: Stack(
+              children: [
+                Icon(Icons.analytics, color: Colors.white),
+                if (_storage.count > 0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${_storage.count}',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            tooltip: 'View gallery statistics',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -707,12 +1466,14 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Platform info
+                // Enhanced platform info with data count
                 Container(
                   padding: EdgeInsets.all(12),
                   margin: EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    gradient: LinearGradient(
+                      colors: [Colors.blue[50]!, Colors.blue[100]!],
+                    ),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.blue[200]!),
                   ),
@@ -721,13 +1482,41 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                       Icon(Icons.info, color: Colors.blue, size: 20),
                       SizedBox(width: 8),
                       Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              kIsWeb 
+                                  ? 'Running on Web Platform'
+                                  : 'Running on Mobile Platform',
+                              style: TextStyle(
+                                color: Colors.blue[800],
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'Gallery loaded with ${_storage.getFeaturedIllustrations().length} featured items',
+                              style: TextStyle(
+                                color: Colors.blue[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[200],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: Text(
-                          kIsWeb 
-                              ? 'Running on Web - Use Sample Image for best results'
-                              : 'Running on Mobile - All options available',
+                          '${_storage.count} total',
                           style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                             color: Colors.blue[800],
-                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -786,7 +1575,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                 
                 // Category Dropdown
                 DropdownButtonFormField<String>(
-                  value: category,
+                  initialValue: category,
                   items: [
                     'Oil Paintings',
                     'Wall Arts',
@@ -830,14 +1619,14 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     subtitle: Text(
-                      'Featured illustrations appear in the main gallery',
+                      'Featured illustrations appear in the favorites gallery automatically',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
                       ),
                     ),
                     value: isFeatured,
-                    activeColor: Colors.purple,
+                    activeThumbColor: Colors.purple,
                     onChanged: (val) => setState(() => isFeatured = val),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -845,7 +1634,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                 
                 SizedBox(height: 32),
                 
-                // Submit Button
+                // Submit Button with enhanced functionality
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -864,13 +1653,31 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                                 _isUploading = true;
                               });
                               
+                              // Create and store illustration data
+                              final newIllustration = Illustration(
+                                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                                title: title,
+                                description: description,
+                                category: category,
+                                isFeatured: isFeatured,
+                                imagePath: _selectedImage?.path,
+                                imageName: _selectedImageName,
+                                createdAt: DateTime.now(),
+                              );
+                              
                               // Simulate upload process
                               Future.delayed(Duration(seconds: 2), () {
+                                // Save to storage
+                                _storage.addIllustration(newIllustration);
+                                
                                 setState(() {
                                   _isUploading = false;
                                 });
                                 
-                                _showSuccessMessage('Illustration "$title" added successfully!');
+                                final stats = _storage.getStatistics();
+                                _showSuccessMessage(
+                                  '🎨 "$title" added! ${isFeatured ? "Now featured in favorites!" : ""} Total: ${stats['total']}'
+                                );
                                 
                                 // Reset form
                                 _formKey.currentState!.reset();
@@ -879,6 +1686,8 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                                   _selectedImageName = null;
                                   category = 'Oil Paintings';
                                   isFeatured = false;
+                                  title = '';
+                                  description = '';
                                 });
                               });
                             }
@@ -907,7 +1716,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                               ),
                               SizedBox(width: 12),
                               Text(
-                                'Uploading...',
+                                'Saving to Gallery...',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -915,12 +1724,19 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                               ),
                             ],
                           )
-                        : Text(
-                            'Add Illustration',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_to_photos),
+                              SizedBox(width: 8),
+                              Text(
+                                'Add to Gallery',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                   ),
                 ),
@@ -930,6 +1746,35 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Example usage in another part of your app:
+class IllustrationListScreen extends StatelessWidget {
+  final IllustrationStorage storage = IllustrationStorage();
+
+  IllustrationListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final illustrations = storage.getAllIllustrations();
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('All Illustrations (${illustrations.length})'),
+      ),
+      body: ListView.builder(
+        itemCount: illustrations.length,
+        itemBuilder: (context, index) {
+          final illustration = illustrations[index];
+          return ListTile(
+            title: Text(illustration.title),
+            subtitle: Text('${illustration.category} • ${illustration.createdAt}'),
+            trailing: illustration.isFeatured ? Icon(Icons.star) : null,
+          );
+        },
       ),
     );
   }

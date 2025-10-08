@@ -7,6 +7,7 @@ import 'package:test_form/login.dart';
 import 'package:test_form/setting_screen.dart';
 import 'package:test_form/translations/app_translations.dart';
 import 'widgets/bottom_navigation.dart';
+import 'package:test_form/form.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Subtitle
+              // Subtitlegle drive
               Text(
                 'CURATED GALLERIES',
                 style: TextStyle(
@@ -284,8 +285,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
+        onPressed: () {
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) =>  AddIllustrationForm()),
+          );
+        },
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -294,6 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(30),
           side: const BorderSide(color: Colors.orange, width: 2),
         ),
+        child: Icon(Icons.add),
       ),
       bottomNavigationBar: const CustomBottomNavigation(currentIndex: 0)
     );
@@ -326,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Container(
+                child: SizedBox(
                   width: double.infinity,
                   child: Image.asset(
                     gallery['image']!,
@@ -513,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Container(
+                child: SizedBox(
                   width: double.infinity,
                   child: Image.asset(
                     gallery['image']!,
