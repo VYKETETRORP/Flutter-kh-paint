@@ -93,121 +93,251 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     }
   }
 
-  // Build image widget with proper handling
- // Build image widget with proper handling
-Widget _buildImageWidget(Map<String, dynamic> item, {double? width, double? height}) {
-  final imagePath = item['imagePath'];
-  final imageName = item['imageName'];
-  
-  // If we have a real image path and not on web
-  if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
-    final imageFile = File(imagePath);
-    if (imageFile.existsSync()) {
-      return Image.file(
-        imageFile,
+  // Main image widget for cards and details
+  Widget _buildImageWidget(Map<String, dynamic> item, {double? width, double? height}) {
+    // Extract the original Illustration object if available
+    final originalItem = item['originalItem'] as Illustration?;
+    final imagePath = originalItem?.imagePath ?? item['imagePath'];
+    final imageName = originalItem?.imageName ?? item['imageName'];
+    final isDefault = originalItem?.id.startsWith('default_') ?? false;
+    
+    // Priority 1: Real device image file
+    if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+      final imageFile = File(imagePath);
+      if (imageFile.existsSync()) {
+        return Image.file(
+          imageFile,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildImagePlaceholder(imageName, isDefault: isDefault, width: width, height: height);
+          },
+        );
+      }
+    }
+    
+    // Priority 2: Network image (for testing/URLs)
+    if (imageName != null && (imageName.startsWith('http') || imageName.startsWith('https'))) {
+      return Image.network(
+        imageName,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: width,
+            height: height,
+            color: Colors.grey[200],
+            child: Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholder(imageName, isDefault: isDefault, width: width, height: height);
+        },
+      );
+    }
+    
+    // Priority 3: Asset image (for default illustrations)
+    if (imageName != null && imageName.isNotEmpty) {
+      return Image.asset(
+        'assets/images/$imageName',
         width: width,
         height: height,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          return _buildImagePlaceholder(imageName, width: width, height: height);
+          return _buildImagePlaceholder(imageName, isDefault: isDefault, width: width, height: height);
         },
       );
     }
+    
+    // Fallback to placeholder
+    return _buildImagePlaceholder(imageName, isDefault: isDefault, width: width, height: height);
   }
-  
-  // Try to load as asset image for default illustrations
-  if (imageName != null) {
-    // For default illustrations, try to load from assets
-    return Image.asset(
-      'assets/images/$imageName',
+
+  // Enhanced image placeholder with better visuals
+  Widget _buildImagePlaceholder(String? imageName, {bool isDefault = false, double? width, double? height}) {
+    return Container(
       width: width,
       height: height,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return _buildImagePlaceholder(imageName, width: width, height: height);
-      },
-    );
-  }
-  
-  // Fallback to placeholder
-  return _buildImagePlaceholder(imageName, width: width, height: height);
-}
-
-// Enhanced image placeholder with better visuals
-Widget _buildImagePlaceholder(String? imageName, {double? width, double? height}) {
-  return Container(
-    width: width,
-    height: height,
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.purple[100]!,
-          Colors.purple[200]!,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDefault 
+              ? [Colors.blue[100]!, Colors.blue[200]!]
+              : [Colors.purple[100]!, Colors.purple[200]!],
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            imageName != null ? Icons.image : Icons.add_photo_alternate,
+            size: width != null ? (width * 0.4).clamp(20.0, 40.0) : 30,
+            color: isDefault ? Colors.blue[600] : Colors.purple[600],
+          ),
+          if (imageName != null) ...[
+            SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                imageName.length > 12 ? '${imageName.substring(0, 9)}...' : imageName,
+                style: TextStyle(
+                  fontSize: width != null ? (width * 0.12).clamp(8.0, 10.0) : 8,
+                  color: isDefault ? Colors.blue[700] : Colors.purple[700],
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            // Show source indicator
+            Container(
+              margin: EdgeInsets.only(top: 2),
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              decoration: BoxDecoration(
+                color: isDefault ? Colors.blue[200] : Colors.green[200],
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                isDefault ? 'DEFAULT' : 'FORM',
+                style: TextStyle(
+                  fontSize: 6,
+                  color: isDefault ? Colors.blue[800] : Colors.green[800],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ] else ...[
+            SizedBox(height: 4),
+            Text(
+              'No Image',
+              style: TextStyle(
+                fontSize: width != null ? (width * 0.1).clamp(6.0, 8.0) : 8,
+                color: isDefault ? Colors.blue[600] : Colors.purple[600],
+              ),
+            ),
+          ],
         ],
       ),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Different icons based on content
-        Icon(
-          imageName != null ? Icons.image : Icons.add_photo_alternate,
-          size: width != null ? width * 0.35 : 35,
-          color: Colors.purple[600],
+    );
+  }
+
+  // Image widget specifically for list items
+  Widget _buildImageWidgetForList(Illustration illustration) {
+    final imagePath = illustration.imagePath;
+    final imageName = illustration.imageName;
+    final isDefault = illustration.id.startsWith('default_');
+    
+    // Priority 1: Real device image file
+    if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+      final imageFile = File(imagePath);
+      if (imageFile.existsSync()) {
+        return Image.file(
+          imageFile,
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildImagePlaceholderForList(imageName, isDefault);
+          },
+        );
+      }
+    }
+    
+    // Priority 2: Network image (for testing)
+    if (imageName != null && (imageName.startsWith('http') || imageName.startsWith('https'))) {
+      return Image.network(
+        imageName,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholderForList(imageName, isDefault);
+        },
+      );
+    }
+    
+    // Priority 3: Asset image
+    if (imageName != null && imageName.isNotEmpty) {
+      return Image.asset(
+        'assets/images/$imageName',
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholderForList(imageName, isDefault);
+        },
+      );
+    }
+    
+    // Fallback placeholder
+    return _buildImagePlaceholderForList(imageName, isDefault);
+  }
+
+  // Build placeholder for list items
+  Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDefault 
+              ? [Colors.blue[100]!, Colors.blue[200]!]
+              : [Colors.purple[100]!, Colors.purple[200]!],
         ),
-        if (imageName != null) ...[
-          SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              imageName.length > 15 ? '${imageName.substring(0, 12)}...' : imageName,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image,
+            size: 20,
+            color: isDefault ? Colors.blue[600] : Colors.purple[600],
+          ),
+          if (imageName != null && imageName.isNotEmpty) ...[
+            SizedBox(height: 2),
+            Text(
+              imageName.length > 8 ? '${imageName.substring(0, 5)}...' : imageName,
               style: TextStyle(
-                fontSize: width != null ? (width * 0.12).clamp(8.0, 12.0) : 10,
-                color: Colors.purple[600],
+                fontSize: 6,
+                color: isDefault ? Colors.blue[700] : Colors.purple[700],
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
-          // Show that it's from form data
-          Container(
-            margin: EdgeInsets.only(top: 4),
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.green[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'FROM FORM',
-              style: TextStyle(
-                fontSize: 6,
-                color: Colors.green[800],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ] else ...[
-          SizedBox(height: 4),
-          Text(
-            'No Image',
-            style: TextStyle(
-              fontSize: width != null ? (width * 0.1).clamp(8.0, 10.0) : 8,
-              color: Colors.purple[600],
-            ),
-          ),
+          ],
         ],
-      ],
-    ),
-  );
-}
-
-
-
-  // Build image placeholder
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
