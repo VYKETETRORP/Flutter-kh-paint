@@ -246,6 +246,139 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
     super.dispose();
   }
 
+  // ADD this method inside _AddIllustrationFormState class
+  void _showDeleteDialog() {
+    final illustration = _storage.getIllustrationById(_editingIllustrationId!);
+    if (illustration == null) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.delete_forever, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Delete Illustration'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Are you sure you want to permanently delete this illustration?',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ' Title: ${illustration.title}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red[800],
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      ' Category: ${illustration.category}',
+                      style: TextStyle(color: Colors.red[700]),
+                    ),
+                    if (illustration.isFeatured) ...[
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            'Featured illustration',
+                            style: TextStyle(color: Colors.red[700]),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning, color: Colors.orange, size: 16),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This action cannot be undone!',
+                        style: TextStyle(
+                          color: Colors.orange[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Perform delete operation
+                bool deleted = _storage.removeIllustration(
+                  _editingIllustrationId!,
+                );
+
+                Navigator.pop(context); // Close dialog
+
+                if (deleted) {
+                  _showSuccessMessage(
+                    '"${illustration.title}" deleted successfully!',
+                  );
+                  _resetForm(); // Reset form after deletion
+                } else {
+                  _showErrorMessage('Failed to delete illustration');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.delete, size: 16),
+                  SizedBox(width: 4),
+                  Text('Delete'),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Pick image from gallery with better error handling
   Future<void> _pickImageFromGallery() async {
     try {
@@ -1488,6 +1621,9 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
         title: Text(
           _isEditMode ? 'Update Illustration' : 'Add Illustraion',
           style: TextStyle(
@@ -1496,12 +1632,11 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
             color: Colors.white,
           ),
         ),
-        // backgroundColor: Colors.purple,
         backgroundColor: _isEditMode ? Colors.orange : Colors.orange[700],
         elevation: 2,
         centerTitle: true,
         actions: [
-          // ADD this cancel button for edit mode
+          // Cancel button for edit mode
           if (_isEditMode)
             IconButton(
               onPressed: () {
@@ -1511,7 +1646,6 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
               icon: Icon(Icons.close, color: Colors.white),
               tooltip: 'Cancel Edit',
             ),
-          // ...existing code...
           // View data button with enhanced badge
           IconButton(
             onPressed: _showDataSummary,
@@ -1733,68 +1867,184 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
 
                 SizedBox(height: 32),
 
-                // Submit Button with enhanced functionality
-                // Submit Button with enhanced functionality
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isUploading
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              if (_selectedImageName == null) {
-                                _showErrorMessage(
-                                  'Please select an image first',
-                                );
-                                return;
-                              }
+                // Replace the existing button section (around line 1960) with this:
+                SizedBox(height: 32),
 
-                              _formKey.currentState!.save();
-                              setState(() {
-                                _isUploading = true;
-                              });
+                // Button Row - Delete and Update side by side in edit mode
+                if (_isEditMode) ...[
+                  // Two buttons side by side for edit mode
+                  Row(
+                    children: [
+                      // Delete Button (left side)
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () => _showDeleteDialog(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.delete_forever, size: 18),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
 
-                              if (_isEditMode) {
-                                // UPDATE existing illustration
-                                final updatedIllustration = Illustration(
-                                  id: _editingIllustrationId!,
-                                  title: title,
-                                  description: description,
-                                  category: category,
-                                  isFeatured: isFeatured,
-                                  imagePath: _selectedImage?.path,
-                                  imageName: _selectedImageName,
-                                  createdAt: _storage
-                                      .getIllustrationById(
-                                        _editingIllustrationId!,
-                                      )!
-                                      .createdAt,
-                                );
+                      SizedBox(width: 12), // Space between buttons
+                      // Update Button (right side)
+                      Expanded(
+                        flex: 2, // Make update button wider
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _isUploading
+                                ? null
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      if (_selectedImageName == null) {
+                                        _showErrorMessage(
+                                          'Please select an image first',
+                                        );
+                                        return;
+                                      }
 
-                                Future.delayed(Duration(seconds: 2), () {
-                                  bool updated = _storage.updateIllustration(
-                                    _editingIllustrationId!,
-                                    updatedIllustration,
+                                      _formKey.currentState!.save();
+                                      setState(() {
+                                        _isUploading = true;
+                                      });
+
+                                      // UPDATE existing illustration
+                                      final updatedIllustration = Illustration(
+                                        id: _editingIllustrationId!,
+                                        title: title,
+                                        description: description,
+                                        category: category,
+                                        isFeatured: isFeatured,
+                                        imagePath: _selectedImage?.path,
+                                        imageName: _selectedImageName,
+                                        createdAt: _storage
+                                            .getIllustrationById(
+                                              _editingIllustrationId!,
+                                            )!
+                                            .createdAt,
+                                      );
+
+                                      Future.delayed(Duration(seconds: 2), () {
+                                        bool updated = _storage
+                                            .updateIllustration(
+                                              _editingIllustrationId!,
+                                              updatedIllustration,
+                                            );
+
+                                        setState(() {
+                                          _isUploading = false;
+                                        });
+
+                                        if (updated) {
+                                          _showSuccessMessage(
+                                            '✅ "$title" updated successfully!',
+                                          );
+                                        } else {
+                                          _showErrorMessage(
+                                            '❌ Failed to update illustration',
+                                          );
+                                        }
+
+                                        _resetForm();
+                                      });
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: _isUploading
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Updating...',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.update, size: 18),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Update Gallery',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  // Single Add button for add mode
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isUploading
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                if (_selectedImageName == null) {
+                                  _showErrorMessage(
+                                    'Please select an image first',
                                   );
+                                  return;
+                                }
 
-                                  setState(() {
-                                    _isUploading = false;
-                                  });
-
-                                  if (updated) {
-                                    _showSuccessMessage(
-                                      '✅ "$title" updated successfully!',
-                                    );
-                                  } else {
-                                    _showErrorMessage(
-                                      '❌ Failed to update illustration',
-                                    );
-                                  }
-
-                                  _resetForm();
+                                _formKey.currentState!.save();
+                                setState(() {
+                                  _isUploading = true;
                                 });
-                              } else {
+
                                 // CREATE new illustration
                                 final newIllustration = Illustration(
                                   id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
@@ -1823,67 +2073,58 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                                   _resetForm();
                                 });
                               }
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isEditMode
-                          ? Colors.orange
-                          : Colors.orange[700],
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange[700],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
                       ),
-                      elevation: 2,
-                    ),
-                    child: _isUploading
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                      child: _isUploading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                _isEditMode
-                                    ? 'Updating...'
-                                    : 'Saving to Gallery...',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                SizedBox(width: 12),
+                                Text(
+                                  'Saving to Gallery...',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                _isEditMode
-                                    ? Icons.update
-                                    : Icons.add_to_photos,
-                                size: 20,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                _isEditMode
-                                    ? 'Update Gallery'
-                                    : 'Add to Gallery',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_to_photos, size: 20),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Add to Gallery',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                    ),
                   ),
-                ),
+                ],
+
+                SizedBox(height: 20),
 
                 SizedBox(height: 20),
               ],
