@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'services/language_service.dart';
 
+import 'login.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final languageService = LanguageService();
@@ -34,7 +36,7 @@ class MyProgram extends StatelessWidget {
                 elevation: 0,
               ),
             ),
-            home: const HomeScreen(),
+            home: const LoginScreen(),
             // You can add routes here if needed
             // routes: {
             //   '/add-illustration': (context) => AddIllustrationForm(),

@@ -944,116 +944,109 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
     );
   }
 
-  // Add this method inside _AddIllustrationFormState class
+// Replace the _buildImageWidgetForList method around line 850
 
-  // Build image widget for list display
-  Widget _buildImageWidgetForList(Illustration illustration) {
-    final imagePath = illustration.imagePath;
-    final imageName = illustration.imageName;
-    final isDefault = illustration.id.startsWith('default_');
+Widget _buildImageWidgetForList(Illustration illustration) {
+  final imagePath = illustration.imagePath;
+  final imageName = illustration.imageName;
+  final isDefault = illustration.id.startsWith('default_');
 
-    // Priority 1: Real device image file
-    if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
-      final imageFile = File(imagePath);
-      if (imageFile.existsSync()) {
-        return Image.file(
-          imageFile,
-          width: 50,
-          height: 50,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildImagePlaceholderForList(imageName, isDefault);
-          },
-        );
-      }
-    }
-
-    // Priority 2: Network image (for testing)
-    if (imageName != null &&
-        (imageName.startsWith('http') || imageName.startsWith('https'))) {
-      return Image.network(
-        imageName,
+  // Priority 1: Real device image file
+  if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+    final imageFile = File(imagePath);
+    if (imageFile.existsSync()) {
+      return Image.file(
+        imageFile,
         width: 50,
         height: 50,
         fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholderForList(imageName, isDefault);
+        },
+      );
+    }
+  }
+
+  // Priority 2: Network image (for testing)
+  if (imageName != null &&
+      (imageName.startsWith('http') || imageName.startsWith('https'))) {
+    return Image.network(
+      imageName,
+      width: 50,
+      height: 50,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Container(
+          width: 50,
+          height: 50,
+          child: Center(
             child: CircularProgressIndicator(
               strokeWidth: 2,
               value: loadingProgress.expectedTotalBytes != null
                   ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                      loadingProgress.expectedTotalBytes!
                   : null,
             ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return _buildImagePlaceholderForList(imageName, isDefault);
-        },
-      );
-    }
-
-    // Priority 3: Asset image
-    if (imageName != null && imageName.isNotEmpty) {
-      return Image.asset(
-        'assets/images/$imageName',
-        width: 50,
-        height: 50,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildImagePlaceholderForList(imageName, isDefault);
-        },
-      );
-    }
-
-    // Fallback placeholder
-    return _buildImagePlaceholderForList(imageName, isDefault);
-  }
-
-  // Build placeholder for list items
-  Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDefault
-              ? [Colors.blue[100]!, Colors.blue[200]!]
-              : [Colors.orange[100]!, Colors.orange[200]!],
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.image,
-            size: 20,
-            color: isDefault ? Colors.blue[600] : Colors.orange[600],
           ),
-          if (imageName != null && imageName.isNotEmpty) ...[
-            SizedBox(height: 2),
-            Text(
-              imageName.length > 8
-                  ? '${imageName.substring(0, 5)}...'
-                  : imageName,
-              style: TextStyle(
-                fontSize: 6,
-                color: isDefault ? Colors.blue[700] : Colors.orange[700],
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ],
-      ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return _buildImagePlaceholderForList(imageName, isDefault);
+      },
     );
   }
 
+  // REMOVE the Asset image section completely - this was causing the error
+  // Always show placeholder for items without real images
+  return _buildImagePlaceholderForList(imageName, isDefault);
+}
+
+  // Build placeholder for list items
+// Also replace the _buildImagePlaceholderForList method
+
+Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
+  return Container(
+    width: 50,
+    height: 50,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: isDefault
+            ? [Colors.blue[100]!, Colors.blue[200]!]
+            : [Colors.orange[100]!, Colors.orange[200]!],
+      ),
+      borderRadius: BorderRadius.circular(8), // Add rounded corners
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.image,
+          size: 20,
+          color: isDefault ? Colors.blue[600] : Colors.orange[600],
+        ),
+        if (imageName != null && imageName.isNotEmpty) ...[
+          SizedBox(height: 2),
+          Text(
+            imageName.length > 8
+                ? '${imageName.substring(0, 5)}...'
+                : imageName,
+            style: TextStyle(
+              fontSize: 6,
+              color: isDefault ? Colors.blue[700] : Colors.orange[700],
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
+    ),
+  );
+}
   // Show fallback options when image picker fails
   void _showFallbackOptions() {
     showDialog(
