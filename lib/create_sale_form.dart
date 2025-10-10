@@ -66,7 +66,7 @@ class CreateSaleForm extends StatefulWidget {
 class _CreateSaleFormState extends State<CreateSaleForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _notesController = TextEditingController();
-  
+
   // Form state
   DateTime _selectedDateTime = DateTime.now();
   Outlet? _selectedOutlet;
@@ -169,10 +169,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                   SizedBox(width: 12),
                   Text(
                     'Choose Outlet',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   IconButton(
@@ -181,9 +178,9 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                   ),
                 ],
               ),
-              
+
               SizedBox(height: 16),
-              
+
               ..._outlets.map((outlet) {
                 return ListTile(
                   leading: Container(
@@ -210,7 +207,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                   },
                 );
               }).toList(),
-              
+
               SizedBox(height: 20),
             ],
           ),
@@ -252,9 +249,9 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   //                   ),
   //                 ],
   //               ),
-                
+
   //               SizedBox(height: 16),
-                
+
   //               Expanded(
   //                 child: ListView.builder(
   //                   itemCount: _availableProducts.length,
@@ -263,7 +260,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   //                     final isSelected = _selectedProducts.any(
   //                       (p) => p.id == product.id,
   //                     );
-                      
+
   //                     return Card(
   //                       margin: EdgeInsets.only(bottom: 8),
   //                       child: ListTile(
@@ -334,313 +331,329 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   //   );
   // }
 
-void _showProductSelection() {
-  // Create a local copy to track temporary selections
-  List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
-  
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setDialogState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Container(
-              width: double.infinity,
-              height: 600, // Increased height for better UX
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Header with selection count
-                  Row(
-                    children: [
-                      Icon(Icons.add_shopping_cart, color: Colors.red),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Add Products',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (tempSelectedIds.isNotEmpty)
+  void _showProductSelection() {
+    // Create a local copy to track temporary selections
+    List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.9,
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Header with selection count
+                    Row(
+                      children: [
+                        Icon(Icons.add_shopping_cart, color: Colors.red),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                '${tempSelectedIds.length} product(s) selected',
+                                'Add Products',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 16),
-                  
-                  // Select All / Deselect All buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            setDialogState(() {
-                              if (tempSelectedIds.length == _availableProducts.length) {
-                                // Deselect all
-                                tempSelectedIds.clear();
-                              } else {
-                                // Select all
-                                tempSelectedIds = _availableProducts.map((p) => p.id).toList();
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            tempSelectedIds.length == _availableProducts.length 
-                                ? Icons.check_box 
-                                : Icons.check_box_outline_blank,
-                            size: 18,
-                          ),
-                          label: Text(
-                            tempSelectedIds.length == _availableProducts.length 
-                                ? 'Deselect All' 
-                                : 'Select All',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              if (tempSelectedIds.isNotEmpty)
+                                Text(
+                                  '${tempSelectedIds.length} product(s) selected',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.blue[200]!),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.close),
                         ),
-                        child: Text(
-                          '${tempSelectedIds.length}/${_availableProducts.length}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[800],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 16),
-                  
-                  // Product list with checkboxes
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _availableProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = _availableProducts[index];
-                        final isSelected = tempSelectedIds.contains(product.id);
-                        
-                        return Card(
-                          margin: EdgeInsets.only(bottom: 8),
-                          elevation: isSelected ? 3 : 1,
-                          color: isSelected ? Colors.blue[50] : Colors.white,
-                          child: ListTile(
-                            onTap: () {
+                      ],
+                    ),
+
+                    SizedBox(height: 16),
+
+                    // Select All / Deselect All buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
                               setDialogState(() {
-                                if (isSelected) {
-                                  tempSelectedIds.remove(product.id);
+                                if (tempSelectedIds.length ==
+                                    _availableProducts.length) {
+                                  // Deselect all
+                                  tempSelectedIds.clear();
                                 } else {
-                                  tempSelectedIds.add(product.id);
+                                  // Select all
+                                  tempSelectedIds = _availableProducts
+                                      .map((p) => p.id)
+                                      .toList();
                                 }
                               });
                             },
-                            leading: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Checkbox
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blue : Colors.transparent,
-                                    border: Border.all(
-                                      color: isSelected ? Colors.blue : Colors.grey,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: isSelected
-                                      ? Icon(
-                                          Icons.check,
-                                          size: 16,
-                                          color: Colors.white,
-                                        )
-                                      : null,
-                                ),
-                                SizedBox(width: 12),
-                                // Product icon
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[100],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.local_cafe,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                ),
-                              ],
+                            icon: Icon(
+                              tempSelectedIds.length ==
+                                      _availableProducts.length
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                              size: 18,
                             ),
-                            title: Text(
-                              '${product.code} - ${product.name}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: isSelected ? Colors.blue[800] : Colors.black,
+                            label: Text(
+                              tempSelectedIds.length ==
+                                      _availableProducts.length
+                                  ? 'Deselect All'
+                                  : 'Select All',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
                               ),
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product.nameKhmer,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isSelected ? Colors.blue[600] : Colors.grey[600],
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '\$${product.price.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: isSelected
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      'Selected',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
-                                : null,
                           ),
-                        );
-                      },
+                        ),
+                        SizedBox(width: 12),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.blue[200]!),
+                          ),
+                          child: Text(
+                            '${tempSelectedIds.length}/${_availableProducts.length}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[800],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  
-                  SizedBox(height: 16),
-                  
-                  // Action buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            side: BorderSide(color: Colors.grey),
-                          ),
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
+
+                    SizedBox(height: 16),
+
+                    // Product list with checkboxes
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _availableProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = _availableProducts[index];
+                          final isSelected = tempSelectedIds.contains(
+                            product.id,
+                          );
+
+                          return Card(
+                            margin: EdgeInsets.only(bottom: 8),
+                            elevation: isSelected ? 3 : 1,
+                            color: isSelected ? Colors.blue[50] : Colors.white,
+                            child: ListTile(
+                              onTap: () {
+                                setDialogState(() {
+                                  if (isSelected) {
+                                    tempSelectedIds.remove(product.id);
+                                  } else {
+                                    tempSelectedIds.add(product.id);
+                                  }
+                                });
+                              },
+                              leading: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Checkbox
+                                  // Container(
+                                  //   width: 24,
+                                  //   height: 24,
+                                  //   decoration: BoxDecoration(
+                                  //     color: isSelected ? Colors.blue : Colors.transparent,
+                                  //     border: Border.all(
+                                  //       color: isSelected ? Colors.blue : Colors.grey,
+                                  //       width: 2,
+                                  //     ),
+                                  //     borderRadius: BorderRadius.circular(4),
+                                  //   ),
+                                  //   child: isSelected
+                                  //       ? Icon(
+                                  //           Icons.check,
+                                  //           size: 16,
+                                  //           color: Colors.white,
+                                  //         )
+                                  //       : null,
+                                  // ),
+                                  SizedBox(width: 12),
+                                  // Product icon
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red[100],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      Icons.local_cafe,
+                                      color: Colors.red,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              title: Text(
+                                '${product.code} - ${product.name}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: isSelected
+                                      ? Colors.blue[800]
+                                      : Colors.black,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.nameKhmer,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: isSelected
+                                          ? Colors.blue[600]
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '\$${product.price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: isSelected
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              side: BorderSide(color: Colors.grey),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        flex: 2,
-                        child: ElevatedButton(
-                          onPressed: tempSelectedIds.isEmpty ? null : () {
-                            setState(() {
-                              // Remove products that are no longer selected
-                              _selectedProducts.removeWhere(
-                                (product) => !tempSelectedIds.contains(product.id),
-                              );
-                              
-                              // Add newly selected products
-                              for (String productId in tempSelectedIds) {
-                                if (!_selectedProducts.any((p) => p.id == productId)) {
-                                  final product = _availableProducts.firstWhere(
-                                    (p) => p.id == productId,
-                                  );
-                                  _selectedProducts.add(Product(
-                                    id: product.id,
-                                    code: product.code,
-                                    name: product.name,
-                                    nameKhmer: product.nameKhmer,
-                                    price: product.price,
-                                    quantity: 1,
-                                  ));
-                                }
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton(
+                            onPressed: tempSelectedIds.isEmpty
+                                ? null
+                                : () {
+                                    setState(() {
+                                      // Remove products that are no longer selected
+                                      _selectedProducts.removeWhere(
+                                        (product) => !tempSelectedIds.contains(
+                                          product.id,
+                                        ),
+                                      );
+
+                                      // Add newly selected products
+                                      for (String productId
+                                          in tempSelectedIds) {
+                                        if (!_selectedProducts.any(
+                                          (p) => p.id == productId,
+                                        )) {
+                                          final product = _availableProducts
+                                              .firstWhere(
+                                                (p) => p.id == productId,
+                                              );
+                                          _selectedProducts.add(
+                                            Product(
+                                              id: product.id,
+                                              code: product.code,
+                                              name: product.name,
+                                              nameKhmer: product.nameKhmer,
+                                              price: product.price,
+                                              quantity: 1,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            tempSelectedIds.isEmpty 
-                                ? 'Select Products' 
-                                : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                            child: Text(
+                              tempSelectedIds.isEmpty
+                                  ? 'Select Products'
+                                  : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
 
   // Show date time picker
   Future<void> _selectDateTime() async {
@@ -778,29 +791,30 @@ void _showProductSelection() {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Date Time Section
-                       Container(
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_today, color: Colors.grey[600]),
-                            SizedBox(width: 12),
-                            Text(
-                              DateFormat('EEE, dd/MM/yyyy hh:mm a')
-                                  .format(_selectedDateTime),
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ],
-                        ),
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey[300]!),
                       ),
-                    
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_today, color: Colors.grey[600]),
+                          SizedBox(width: 12),
+                          Text(
+                            DateFormat(
+                              'EEE, dd/MM/yyyy hh:mm a',
+                            ).format(_selectedDateTime),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     SizedBox(height: 16),
                     // Outlet Selection
                     GestureDetector(
@@ -826,15 +840,16 @@ void _showProductSelection() {
                               ),
                             ),
                             Spacer(),
-                            Icon(Icons.keyboard_arrow_down, color: Colors.grey[600]),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.grey[600],
+                            ),
                           ],
                         ),
                       ),
                     ),
 
                     SizedBox(height: 20),
-
-                
 
                     // Notes Section
                     Container(
@@ -901,11 +916,11 @@ void _showProductSelection() {
                         ),
                       ),
                       SizedBox(height: 12),
-                      
+
                       ..._selectedProducts.asMap().entries.map((entry) {
                         final index = entry.key;
                         final product = entry.value;
-                        
+
                         return Container(
                           margin: EdgeInsets.only(bottom: 12),
                           padding: EdgeInsets.all(16),
@@ -934,9 +949,9 @@ void _showProductSelection() {
                                   ),
                                 ),
                               ),
-                              
+
                               SizedBox(width: 12),
-                              
+
                               // Product icon
                               Container(
                                 width: 40,
@@ -951,9 +966,9 @@ void _showProductSelection() {
                                   size: 20,
                                 ),
                               ),
-                              
+
                               SizedBox(width: 12),
-                              
+
                               // Product details
                               Expanded(
                                 child: Column(
@@ -1002,7 +1017,7 @@ void _showProductSelection() {
                                   ],
                                 ),
                               ),
-                              
+
                               // Quantity controls
                               Column(
                                 children: [
@@ -1023,7 +1038,9 @@ void _showProductSelection() {
                                           height: 24,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           child: Icon(
                                             Icons.remove,
@@ -1035,10 +1052,16 @@ void _showProductSelection() {
                                       SizedBox(width: 8),
                                       Container(
                                         width: 32,
-                                        padding: EdgeInsets.symmetric(vertical: 4),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 4,
+                                        ),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey[300]!),
-                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                            color: Colors.grey[300]!,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Text(
                                           '${product.quantity}',
@@ -1062,7 +1085,9 @@ void _showProductSelection() {
                                           height: 24,
                                           decoration: BoxDecoration(
                                             color: Colors.blue[100],
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           child: Icon(
                                             Icons.add,
@@ -1098,7 +1123,7 @@ void _showProductSelection() {
                           ),
                         );
                       }).toList(),
-                      
+
                       // Total Amount
                       Container(
                         padding: EdgeInsets.all(16),
@@ -1136,7 +1161,7 @@ void _showProductSelection() {
                 ),
               ),
             ),
-            
+
             // Submit Button (Fixed at bottom)
             Container(
               padding: EdgeInsets.all(16),
