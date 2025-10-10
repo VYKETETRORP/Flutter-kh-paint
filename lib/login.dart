@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/login.png'),
+            image: AssetImage('assets/l8.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 70),
                 const CircleAvatar(
                   radius: 70,
-                  backgroundImage: AssetImage('assets/l4.jpg'),
+                  backgroundImage: AssetImage('assets/logo7.jpg'),
                 ),
                 const SizedBox(height: 60),
                 const Text(
