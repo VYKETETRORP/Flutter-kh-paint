@@ -258,7 +258,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             );
 
                             return Container(
-                              margin: EdgeInsets.only(bottom: 12),
+  margin: EdgeInsets.only(bottom: 4), // ← Changed from 12 to 4
                               child: ListTile(
                                 onTap: () {
                                   setDialogState(() {
@@ -303,7 +303,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                     children: [
                                       TextSpan(
                                         text:
-                                            '${product.code}\'${product.name.split(' ').take(2).join(' ')} ',
+                                            '${product.code}\ : ${product.name.split(' ').take(2).join(' ')} ',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
@@ -336,8 +336,8 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                       )
                                     : null,
                                 contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                  vertical: 8,
+                                  horizontal: 16,
+                                  vertical: 4,
                                 ),
                               ),
                             );
