@@ -729,16 +729,32 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                 //   ),
                                 // ],
                               ),
-                              title: Text(
-                                '${product.code} - ${product.name}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: isSelected
-                                      ? Colors.blue[800]
-                                      : Colors.black,
-                                ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.code,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    product.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: isSelected
+                                          ? Colors.blue[800]
+                                          : Colors.black,
+                                    ),
+                                    // Remove maxLines and overflow to show full text
+                                  ),
+                                ],
                               ),
+
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -1159,35 +1175,31 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                               SizedBox(width: 12),
 
                               // Product details
+                              // Replace the product details section in the selected products list (around line 1160):
+
+                              // Product details
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${product.code} - ${product.name}',
+                                      '${product.code} ${product.name}',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: 2),
-                                    Text(
-                                      '(${product.nameKhmer})',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: const Color.fromARGB(
-                                          255,
-                                          0,
-                                          0,
-                                          0,
-                                        ),
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                      // Allow text to wrap to multiple lines
                                     ),
                                     SizedBox(height: 4),
+                                    // Text(
+                                    //   '(${product.nameKhmer})',
+                                    //   style: TextStyle(
+                                    //     fontSize: 12,
+                                    //     color: Colors.grey[700],
+                                    //   ),
+                                    //   // Allow Khmer text to wrap as well
+                                    // ),
+                                    // SizedBox(height: 8),
                                     Row(
                                       children: [
                                         Text(
@@ -1207,7 +1219,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                           ),
                                         ),
                                         SizedBox(width: 8),
-                                        SizedBox(width: 8),
                                         Text(
                                           '= \$${(product.price * product.quantity).toStringAsFixed(2)}',
                                           style: TextStyle(
@@ -1215,7 +1226,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                             color: Colors.blue,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ],
