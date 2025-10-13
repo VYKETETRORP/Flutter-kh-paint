@@ -83,28 +83,28 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   final List<Product> _availableProducts = [
     Product(
       id: '1',
-      code: '4401010110',
+      code: '10110',
       name: 'Premium Coffee Beans',
       nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
       price: 25.50,
     ),
     Product(
       id: '2',
-      code: '4401010111',
+      code: '10111',
       name: 'Organic Tea Leaves',
       nameKhmer: 'ស្លឹកតែធម្មជាតិ',
       price: 18.75,
     ),
     Product(
       id: '3',
-      code: '4401010112',
+      code: '10112',
       name: 'Fresh Milk',
       nameKhmer: 'ទឹកដោះគោស្រស់',
       price: 12.00,
     ),
     Product(
       id: '4',
-      code: '4401010113',
+      code: '10113',
       name: 'Chocolate Powder',
       nameKhmer: 'ម្សៅសូកូឡា',
       price: 22.30,
@@ -118,7 +118,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     _selectedProducts = [
       Product(
         id: '1',
-        code: '4401010110',
+        code: '10110',
         name: 'Premium Coffee Beans',
         nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
         price: 25.50,
@@ -126,7 +126,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       ),
       Product(
         id: '2',
-        code: '4401010111',
+        code: '10111',
         name: 'Organic Tea Leaves',
         nameKhmer: 'ស្លឹកតែធម្មជាតិ',
         price: 18.75,
@@ -541,296 +541,313 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   // }
   // Replace the _showProductSelection method with this updated version:
 
-void _showProductSelection() {
-  List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
+  void _showProductSelection() {
+    List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setDialogState) {
-          return Dialog(
-            insetPadding: EdgeInsets.zero, // Remove default margins
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero, // Remove rounded corners
-            ),
-            child: Container(
-              width: MediaQuery.of(context).size.width, // Full screen width
-              height: MediaQuery.of(context).size.height, // Full screen height
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Header with selection count
-                  Row(
-                    children: [
-                      Icon(Icons.add_shopping_cart, color: Colors.red),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Add Products',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (tempSelectedIds.isNotEmpty)
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              insetPadding: EdgeInsets.zero, // Remove default margins
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero, // Remove rounded corners
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width, // Full screen width
+                height: MediaQuery.of(
+                  context,
+                ).size.height, // Full screen height
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Header with selection count
+                    Row(
+                      children: [
+                        Icon(Icons.add_shopping_cart, color: Colors.red),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                '${tempSelectedIds.length} product(s) selected',
+                                'Add Products',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 16),
-
-                  // Select All / Deselect All buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            setDialogState(() {
-                              if (tempSelectedIds.length == _availableProducts.length) {
-                                // Deselect all
-                                tempSelectedIds.clear();
-                              } else {
-                                // Select all
-                                tempSelectedIds = _availableProducts.map((p) => p.id).toList();
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            tempSelectedIds.length == _availableProducts.length
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            size: 18,
-                          ),
-                          label: Text(
-                            tempSelectedIds.length == _availableProducts.length
-                                ? 'Deselect All'
-                                : 'Select All',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              if (tempSelectedIds.isNotEmpty)
+                                Text(
+                                  '${tempSelectedIds.length} product(s) selected',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.blue[200]!),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.close),
                         ),
-                        child: Text(
-                          '${tempSelectedIds.length}/${_availableProducts.length}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[800],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  SizedBox(height: 16),
+                    SizedBox(height: 16),
 
-                  // Product list with checkboxes
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _availableProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = _availableProducts[index];
-                        final isSelected = tempSelectedIds.contains(product.id);
-
-                        return Card(
-                          margin: EdgeInsets.only(bottom: 8),
-                          elevation: isSelected ? 3 : 1,
-                          color: isSelected ? Colors.blue[50] : Colors.white,
-                          child: ListTile(
-                            onTap: () {
+                    // Select All / Deselect All buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
                               setDialogState(() {
-                                if (isSelected) {
-                                  tempSelectedIds.remove(product.id);
+                                if (tempSelectedIds.length ==
+                                    _availableProducts.length) {
+                                  // Deselect all
+                                  tempSelectedIds.clear();
                                 } else {
-                                  tempSelectedIds.add(product.id);
+                                  // Select all
+                                  tempSelectedIds = _availableProducts
+                                      .map((p) => p.id)
+                                      .toList();
                                 }
                               });
                             },
-                            leading: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Checkbox
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.blue : Colors.transparent,
-                                    border: Border.all(
-                                      color: isSelected ? Colors.blue : Colors.grey,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: isSelected
-                                      ? Icon(
-                                          Icons.check,
-                                          size: 16,
-                                          color: Colors.white,
-                                        )
-                                      : null,
-                                ),
-                                SizedBox(width: 12),
-                                // Product icon
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[100],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.local_cafe,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                ),
-                              ],
+                            icon: Icon(
+                              tempSelectedIds.length ==
+                                      _availableProducts.length
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                              size: 18,
                             ),
-                            title: Text(
-                              '${product.code} - ${product.name}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: isSelected ? Colors.blue[800] : Colors.black,
+                            label: Text(
+                              tempSelectedIds.length ==
+                                      _availableProducts.length
+                                  ? 'Deselect All'
+                                  : 'Select All',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
                               ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product.nameKhmer,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isSelected ? Colors.blue[600] : Colors.grey[600],
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '\$${product.price.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: isSelected
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      'Selected',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  SizedBox(height: 16),
-
-                  // Action buttons
-                  Row(
-                    children: [
-                    
-                      Expanded(
-                        flex: 2,
-                        child: ElevatedButton(
-                          onPressed: tempSelectedIds.isEmpty ? null : () {
-                            setState(() {
-                              // Remove products that are no longer selected
-                              _selectedProducts.removeWhere(
-                                (product) => !tempSelectedIds.contains(product.id),
-                              );
-
-                              // Add newly selected products
-                              for (String productId in tempSelectedIds) {
-                                if (!_selectedProducts.any((p) => p.id == productId)) {
-                                  final product = _availableProducts.firstWhere(
-                                    (p) => p.id == productId,
-                                  );
-                                  _selectedProducts.add(Product(
-                                    id: product.id,
-                                    code: product.code,
-                                    name: product.name,
-                                    nameKhmer: product.nameKhmer,
-                                    price: product.price,
-                                    quantity: 1,
-                                  ));
-                                }
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            tempSelectedIds.isEmpty
-                                ? 'Select Products'
-                                : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
+                        SizedBox(width: 12),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.blue[200]!),
+                          ),
+                          child: Text(
+                            '${tempSelectedIds.length}/${_availableProducts.length}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[800],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 16),
+
+                    // Product list with checkboxes
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _availableProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = _availableProducts[index];
+                          final isSelected = tempSelectedIds.contains(
+                            product.id,
+                          );
+
+                          return Card(
+                            margin: EdgeInsets.only(bottom: 8),
+                            elevation: isSelected ? 3 : 1,
+                            color: isSelected ? Colors.blue[50] : Colors.white,
+                            child: ListTile(
+                              onTap: () {
+                                setDialogState(() {
+                                  if (isSelected) {
+                                    tempSelectedIds.remove(product.id);
+                                  } else {
+                                    tempSelectedIds.add(product.id);
+                                  }
+                                });
+                              },
+                              leading: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                // children: [
+                                //   // Checkbox
+                                //   Container(
+                                //     width: 24,
+                                //     height: 24,
+                                //     decoration: BoxDecoration(
+                                //       color: isSelected ? Colors.blue : Colors.transparent,
+                                //       border: Border.all(
+                                //         color: isSelected ? Colors.blue : Colors.grey,
+                                //         width: 2,
+                                //       ),
+                                //       borderRadius: BorderRadius.circular(4),
+                                //     ),
+                                //     child: isSelected
+                                //         ? Icon(
+                                //             Icons.check,
+                                //             size: 16,
+                                //             color: Colors.white,
+                                //           )
+                                //         : null,
+                                //   ),
+                                //   SizedBox(width: 12),
+                                //   // Product icon
+                                //   Container(
+                                //     width: 40,
+                                //     height: 40,
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.red[100],
+                                //       borderRadius: BorderRadius.circular(8),
+                                //     ),
+                                //     child: Icon(
+                                //       Icons.local_cafe,
+                                //       color: Colors.red,
+                                //       size: 20,
+                                //     ),
+                                //   ),
+                                // ],
+                              ),
+                              title: Text(
+                                '${product.code} - ${product.name}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: isSelected
+                                      ? Colors.blue[800]
+                                      : Colors.black,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.nameKhmer,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: isSelected
+                                          ? Colors.blue[600]
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '\$${product.price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: isSelected
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+
+                    SizedBox(height: 16),
+
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton(
+                            onPressed: tempSelectedIds.isEmpty
+                                ? null
+                                : () {
+                                    setState(() {
+                                      // Remove products that are no longer selected
+                                      _selectedProducts.removeWhere(
+                                        (product) => !tempSelectedIds.contains(
+                                          product.id,
+                                        ),
+                                      );
+
+                                      // Add newly selected products
+                                      for (String productId
+                                          in tempSelectedIds) {
+                                        if (!_selectedProducts.any(
+                                          (p) => p.id == productId,
+                                        )) {
+                                          final product = _availableProducts
+                                              .firstWhere(
+                                                (p) => p.id == productId,
+                                              );
+                                          _selectedProducts.add(
+                                            Product(
+                                              id: product.id,
+                                              code: product.code,
+                                              name: product.name,
+                                              nameKhmer: product.nameKhmer,
+                                              price: product.price,
+                                              quantity: 1,
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              tempSelectedIds.isEmpty
+                                  ? 'Select Products'
+                                  : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
 
   // Show date time picker
   Future<void> _selectDateTime() async {
@@ -1160,7 +1177,12 @@ void _showProductSelection() {
                                       '(${product.nameKhmer})',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.grey[600],
+                                        color: const Color.fromARGB(
+                                          255,
+                                          0,
+                                          0,
+                                          0,
+                                        ),
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -1184,6 +1206,16 @@ void _showProductSelection() {
                                             color: Colors.grey[600],
                                           ),
                                         ),
+                                        SizedBox(width: 8),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          '= \$${(product.price * product.quantity).toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ],
@@ -1203,6 +1235,8 @@ void _showProductSelection() {
                                               index,
                                               product.quantity - 1,
                                             );
+                                          } else {
+                                            _removeProduct(index);
                                           }
                                         },
                                         child: Container(
@@ -1215,9 +1249,13 @@ void _showProductSelection() {
                                             ),
                                           ),
                                           child: Icon(
-                                            Icons.remove,
+                                            product.quantity == 1
+                                                ? Icons.delete
+                                                : Icons.remove,
                                             size: 16,
-                                            color: Colors.grey[600],
+                                            color: product.quantity == 1
+                                                ? Colors.red
+                                                : Colors.grey[600],
                                           ),
                                         ),
                                       ),
@@ -1271,24 +1309,24 @@ void _showProductSelection() {
                                     ],
                                   ),
                                   SizedBox(height: 8),
-                                  GestureDetector(
-                                    onTap: () => _removeProduct(index),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red[100],
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Icon(
-                                        Icons.delete,
-                                        size: 14,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
+                                  // GestureDetector(
+                                  //   onTap: () => _removeProduct(index),
+                                  //   child: Container(
+                                  //     padding: EdgeInsets.symmetric(
+                                  //       horizontal: 8,
+                                  //       vertical: 4,
+                                  //     ),
+                                  //     decoration: BoxDecoration(
+                                  //       color: Colors.red[100],
+                                  //       borderRadius: BorderRadius.circular(12),
+                                  //     ),
+                                  //     child: Icon(
+                                  //       Icons.delete,
+                                  //       size: 14,
+                                  //       color: Colors.red,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],
