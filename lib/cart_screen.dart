@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'models.dart'; 
-
+import 'models.dart';
 
 class CartScreen extends StatefulWidget {
   final Ticket ticket;
 
-  const CartScreen({
-    Key? key,
-    required this.ticket,
-  }) : super(key: key);
+  const CartScreen({Key? key, required this.ticket}) : super(key: key);
 
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -18,14 +14,17 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   late List<Product> _cartProducts;
   TextEditingController _promoController = TextEditingController();
-  
+
   // Cart calculations
   double get _subtotal {
-    return _cartProducts.fold(0.0, (sum, product) => sum + (product.price * product.quantity));
+    return _cartProducts.fold(
+      0.0,
+      (sum, product) => sum + (product.price * product.quantity),
+    );
   }
-  
+
   double get _deliveryFee => 5.0; // Fixed delivery fee
-  
+
   double get _total => _subtotal + _deliveryFee;
 
   @override
@@ -74,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           title: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 28),
+              Icon(Icons.check_circle, color: Colors.blue, size: 28),
               SizedBox(width: 12),
               Text('Order Confirmed!'),
             ],
@@ -160,23 +159,23 @@ class _CartScreenState extends State<CartScreen> {
                           final product = entry.value;
                           return _buildCartItem(product, index);
                         }).toList(),
-                        
+
                         SizedBox(height: 20),
-                        
+
                         // Promo Code Section
                         _buildPromoCodeSection(),
-                        
+
                         SizedBox(height: 20),
-                        
+
                         // Summary Section
                         _buildSummarySection(),
-                        
+
                         SizedBox(height: 100), // Space for checkout button
                       ],
                     ),
                   ),
                 ),
-                
+
                 // Checkout Button (Fixed at bottom)
                 _buildCheckoutButton(),
               ],
@@ -189,11 +188,7 @@ class _CartScreenState extends State<CartScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey[400]),
           SizedBox(height: 16),
           Text(
             'Your cart is empty',
@@ -206,10 +201,7 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 8),
           Text(
             'Add some products to get started',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -242,15 +234,11 @@ class _CartScreenState extends State<CartScreen> {
               color: Colors.orange[100],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.local_cafe,
-              color: Colors.orange[600],
-              size: 30,
-            ),
+            child: Icon(Icons.local_cafe, color: Colors.orange[600], size: 30),
           ),
-          
+
           SizedBox(width: 16),
-          
+
           // Product Details
           Expanded(
             child: Column(
@@ -258,23 +246,17 @@ class _CartScreenState extends State<CartScreen> {
               children: [
                 Text(
                   product.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 4),
                 Text(
                   '\$${product.price.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
           ),
-          
+
           // Quantity Controls
           Row(
             children: [
@@ -287,46 +269,50 @@ class _CartScreenState extends State<CartScreen> {
                   }
                 },
                 child: Container(
-                  width: 32,
-                  height: 32,
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: product.quantity == 1 ? Colors.red[100] : Colors.grey[200],
-                    shape: BoxShape.circle,
+                    color: product.quantity == 1
+                        ? Colors.red[100]
+                        : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     product.quantity == 1 ? Icons.delete : Icons.remove,
-                    size: 18,
-                    color: product.quantity == 1 ? Colors.red : Colors.grey[600],
+                    size: 16,
+                    color: product.quantity == 1
+                        ? Colors.red
+                        : Colors.grey[600],
                   ),
                 ),
               ),
-              
+              SizedBox(width: 8),
+
               Container(
-                width: 40,
-                alignment: Alignment.center,
+                width: 32,
+                padding: EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 child: Text(
                   '${product.quantity}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ),
-              
+              SizedBox(width: 8),
+
               GestureDetector(
                 onTap: () => _updateQuantity(index, product.quantity + 1),
                 child: Container(
-                  width: 32,
-                  height: 32,
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.green[400],
-                    shape: BoxShape.circle,
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.add,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                  child: Icon(Icons.add, size: 16, color: Colors.blue),
                 ),
               ),
             ],
@@ -397,9 +383,17 @@ class _CartScreenState extends State<CartScreen> {
       ),
       child: Column(
         children: [
-          _buildSummaryRow('Subtotal', '\$${_subtotal.toStringAsFixed(2)}', false),
+          _buildSummaryRow(
+            'Subtotal',
+            '\$${_subtotal.toStringAsFixed(2)}',
+            false,
+          ),
           SizedBox(height: 12),
-          _buildSummaryRow('Delivery', '\$${_deliveryFee.toStringAsFixed(2)}', false),
+          _buildSummaryRow(
+            'Delivery',
+            '\$${_deliveryFee.toStringAsFixed(2)}',
+            false,
+          ),
           SizedBox(height: 16),
           Divider(),
           SizedBox(height: 16),
@@ -463,10 +457,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             child: Text(
               'Checkout • \$${_total.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
         ),

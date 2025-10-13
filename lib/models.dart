@@ -6,6 +6,7 @@ class Product {
   final String nameKhmer;
   final double price;
   final String? imageUrl;
+  final String? localImagePath;
   int quantity;
 
   Product({
@@ -15,6 +16,7 @@ class Product {
     required this.nameKhmer,
     required this.price,
     this.imageUrl,
+    this.localImagePath,
     this.quantity = 1,
   });
 }
@@ -42,6 +44,7 @@ class Ticket {
   final String? notes;
   final List<Product> products;
   final double totalAmount;
+  
 
   Ticket({
     required this.id,
