@@ -216,444 +216,621 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     );
   }
 
-  // Show product selection dialog
   // void _showProductSelection() {
+  //   List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
+
   //   showDialog(
   //     context: context,
   //     builder: (BuildContext context) {
-  //       return Dialog(
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(15),
-  //         ),
-  //         child: Container(
-  //           width: double.infinity,
-  //           height: 500,
-  //           padding: EdgeInsets.all(20),
-  //           child: Column(
-  //             children: [
-  //               Row(
+  //       return StatefulBuilder(
+  //         builder: (context, setDialogState) {
+  //           return Dialog(
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(15),
+  //             ),
+  //             child: Container(
+  //              width: MediaQuery.of(context).size.width,  // ← Full width
+  //   height: MediaQuery.of(context).size.height, // ← Full height
+  //   // ...
+  //               padding: EdgeInsets.all(20),
+  //               child: Column(
   //                 children: [
-  //                   Icon(Icons.add_shopping_cart, color: Colors.red),
-  //                   SizedBox(width: 12),
-  //                   Text(
-  //                     'Add Product',
-  //                     style: TextStyle(
-  //                       fontSize: 20,
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                   ),
-  //                   Spacer(),
-  //                   IconButton(
-  //                     onPressed: () => Navigator.pop(context),
-  //                     icon: Icon(Icons.close),
-  //                   ),
-  //                 ],
-  //               ),
-
-  //               SizedBox(height: 16),
-
-  //               Expanded(
-  //                 child: ListView.builder(
-  //                   itemCount: _availableProducts.length,
-  //                   itemBuilder: (context, index) {
-  //                     final product = _availableProducts[index];
-  //                     final isSelected = _selectedProducts.any(
-  //                       (p) => p.id == product.id,
-  //                     );
-
-  //                     return Card(
-  //                       margin: EdgeInsets.only(bottom: 8),
-  //                       child: ListTile(
-  //                         leading: Container(
-  //                           width: 50,
-  //                           height: 50,
-  //                           decoration: BoxDecoration(
-  //                             color: Colors.red[100],
-  //                             borderRadius: BorderRadius.circular(8),
-  //                           ),
-  //                           child: Icon(
-  //                             Icons.local_cafe,
-  //                             color: Colors.red,
-  //                           ),
-  //                         ),
-  //                         title: Text(
-  //                           '${product.code} - ${product.name}',
-  //                           style: TextStyle(
-  //                             fontWeight: FontWeight.w600,
-  //                             fontSize: 14,
-  //                           ),
-  //                         ),
-  //                         subtitle: Column(
+  //                   // Header with selection count
+  //                   Row(
+  //                     children: [
+  //                       Icon(Icons.add_shopping_cart, color: Colors.red),
+  //                       SizedBox(width: 12),
+  //                       Expanded(
+  //                         child: Column(
   //                           crossAxisAlignment: CrossAxisAlignment.start,
   //                           children: [
   //                             Text(
-  //                               product.nameKhmer,
-  //                               style: TextStyle(fontSize: 12),
-  //                             ),
-  //                             SizedBox(height: 4),
-  //                             Text(
-  //                               '\$${product.price.toStringAsFixed(2)}',
+  //                               'Add Products',
   //                               style: TextStyle(
-  //                                 color: Colors.green,
+  //                                 fontSize: 20,
   //                                 fontWeight: FontWeight.bold,
   //                               ),
   //                             ),
+  //                             if (tempSelectedIds.isNotEmpty)
+  //                               Text(
+  //                                 '${tempSelectedIds.length} product(s) selected',
+  //                                 style: TextStyle(
+  //                                   fontSize: 12,
+  //                                   color: Colors.blue,
+  //                                   fontWeight: FontWeight.w500,
+  //                                 ),
+  //                               ),
   //                           ],
   //                         ),
-  //                         trailing: isSelected
-  //                             ? Icon(Icons.check_circle, color: Colors.green)
-  //                             : Icon(Icons.add_circle_outline, color: Colors.grey),
-  //                         onTap: () {
-  //                           if (!isSelected) {
-  //                             setState(() {
-  //                               _selectedProducts.add(Product(
-  //                                 id: product.id,
-  //                                 code: product.code,
-  //                                 name: product.name,
-  //                                 nameKhmer: product.nameKhmer,
-  //                                 price: product.price,
-  //                                 quantity: 1,
-  //                               ));
-  //                             });
-  //                             Navigator.pop(context);
-  //                           }
-  //                         },
   //                       ),
-  //                     );
-  //                   },
-  //                 ),
+  //                       IconButton(
+  //                         onPressed: () => Navigator.pop(context),
+  //                         icon: Icon(Icons.close),
+  //                       ),
+  //                     ],
+  //                   ),
+
+  //                   SizedBox(height: 16),
+
+  //                   // Select All / Deselect All buttons
+  //                   Row(
+  //                     children: [
+  //                       Expanded(
+  //                         child: OutlinedButton.icon(
+  //                           onPressed: () {
+  //                             setDialogState(() {
+  //                               if (tempSelectedIds.length ==
+  //                                   _availableProducts.length) {
+  //                                 // Deselect all
+  //                                 tempSelectedIds.clear();
+  //                               } else {
+  //                                 // Select all
+  //                                 tempSelectedIds = _availableProducts
+  //                                     .map((p) => p.id)
+  //                                     .toList();
+  //                               }
+  //                             });
+  //                           },
+  //                           icon: Icon(
+  //                             tempSelectedIds.length ==
+  //                                     _availableProducts.length
+  //                                 ? Icons.check_box
+  //                                 : Icons.check_box_outline_blank,
+  //                             size: 18,
+  //                           ),
+  //                           label: Text(
+  //                             tempSelectedIds.length ==
+  //                                     _availableProducts.length
+  //                                 ? 'Deselect All'
+  //                                 : 'Select All',
+  //                             style: TextStyle(fontSize: 12),
+  //                           ),
+  //                           style: OutlinedButton.styleFrom(
+  //                             padding: EdgeInsets.symmetric(
+  //                               horizontal: 12,
+  //                               vertical: 8,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       SizedBox(width: 12),
+  //                       Container(
+  //                         padding: EdgeInsets.symmetric(
+  //                           horizontal: 12,
+  //                           vertical: 8,
+  //                         ),
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.blue[50],
+  //                           borderRadius: BorderRadius.circular(20),
+  //                           border: Border.all(color: Colors.blue[200]!),
+  //                         ),
+  //                         child: Text(
+  //                           '${tempSelectedIds.length}/${_availableProducts.length}',
+  //                           style: TextStyle(
+  //                             fontSize: 12,
+  //                             fontWeight: FontWeight.bold,
+  //                             color: Colors.blue[800],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+
+  //                   SizedBox(height: 16),
+
+  //                   // Product list with checkboxes
+  //                   Expanded(
+  //                     child: ListView.builder(
+  //                       itemCount: _availableProducts.length,
+  //                       itemBuilder: (context, index) {
+  //                         final product = _availableProducts[index];
+  //                         final isSelected = tempSelectedIds.contains(
+  //                           product.id,
+  //                         );
+
+  //                         return Card(
+  //                           margin: EdgeInsets.only(bottom: 8),
+  //                           elevation: isSelected ? 3 : 1,
+  //                           color: isSelected ? Colors.blue[50] : Colors.white,
+  //                           child: ListTile(
+  //                             onTap: () {
+  //                               setDialogState(() {
+  //                                 if (isSelected) {
+  //                                   tempSelectedIds.remove(product.id);
+  //                                 } else {
+  //                                   tempSelectedIds.add(product.id);
+  //                                 }
+  //                               });
+  //                             },
+  //                             leading: Row(
+  //                               mainAxisSize: MainAxisSize.min,
+  //                               children: [
+  //                                 // Checkbox
+  //                                 // Container(
+  //                                 //   width: 24,
+  //                                 //   height: 24,
+  //                                 //   decoration: BoxDecoration(
+  //                                 //     color: isSelected ? Colors.blue : Colors.transparent,
+  //                                 //     border: Border.all(
+  //                                 //       color: isSelected ? Colors.blue : Colors.grey,
+  //                                 //       width: 2,
+  //                                 //     ),
+  //                                 //     borderRadius: BorderRadius.circular(4),
+  //                                 //   ),
+  //                                 //   child: isSelected
+  //                                 //       ? Icon(
+  //                                 //           Icons.check,
+  //                                 //           size: 16,
+  //                                 //           color: Colors.white,
+  //                                 //         )
+  //                                 //       : null,
+  //                                 // ),
+  //                                 SizedBox(width: 12),
+  //                                 // Product icon
+  //                                 Container(
+  //                                   width: 40,
+  //                                   height: 40,
+  //                                   decoration: BoxDecoration(
+  //                                     color: Colors.red[100],
+  //                                     borderRadius: BorderRadius.circular(8),
+  //                                   ),
+  //                                   child: Icon(
+  //                                     Icons.local_cafe,
+  //                                     color: Colors.red,
+  //                                     size: 20,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             title: Text(
+  //                               '${product.code} - ${product.name}',
+  //                               style: TextStyle(
+  //                                 fontWeight: FontWeight.w600,
+  //                                 fontSize: 14,
+  //                                 color: isSelected
+  //                                     ? Colors.blue[800]
+  //                                     : Colors.black,
+  //                               ),
+  //                             ),
+  //                             subtitle: Column(
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Text(
+  //                                   product.nameKhmer,
+  //                                   style: TextStyle(
+  //                                     fontSize: 12,
+  //                                     color: isSelected
+  //                                         ? Colors.blue[600]
+  //                                         : Colors.grey[600],
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(height: 4),
+  //                                 Text(
+  //                                   '\$${product.price.toStringAsFixed(2)}',
+  //                                   style: TextStyle(
+  //                                     color: Colors.green,
+  //                                     fontWeight: FontWeight.bold,
+  //                                     fontSize: 12,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             trailing: isSelected
+  //                                 ? Icon(
+  //                                     Icons.check_circle,
+  //                                     color: Colors.green,
+  //                                   )
+  //                                 : null,
+  //                           ),
+  //                         );
+  //                       },
+  //                     ),
+  //                   ),
+
+  //                   SizedBox(height: 16),
+
+  //                   // Action buttons
+  //                   Row(
+  //                     children: [
+  //                       // Expanded(
+  //                       // child: OutlinedButton(
+  //                       //   onPressed: () => Navigator.pop(context),
+  //                       //   style: OutlinedButton.styleFrom(
+  //                       //     padding: EdgeInsets.symmetric(vertical: 14),
+  //                       //     side: BorderSide(color: Colors.grey),
+  //                       //   ),
+  //                       //   child: Text(
+  //                       //     'Cancel',
+  //                       //     style: TextStyle(
+  //                       //       fontSize: 16,
+  //                       //       fontWeight: FontWeight.w600,
+  //                       //       color: Colors.grey[700],
+  //                       //     ),
+  //                       //   ),
+  //                       // ),
+  //                       // ),
+  //                       SizedBox(width: 12),
+  //                       Expanded(
+  //                         flex: 2,
+  //                         child: ElevatedButton(
+  //                           onPressed: tempSelectedIds.isEmpty
+  //                               ? null
+  //                               : () {
+  //                                   setState(() {
+  //                                     // Remove products that are no longer selected
+  //                                     _selectedProducts.removeWhere(
+  //                                       (product) => !tempSelectedIds.contains(
+  //                                         product.id,
+  //                                       ),
+  //                                     );
+
+  //                                     // Add newly selected products
+  //                                     for (String productId
+  //                                         in tempSelectedIds) {
+  //                                       if (!_selectedProducts.any(
+  //                                         (p) => p.id == productId,
+  //                                       )) {
+  //                                         final product = _availableProducts
+  //                                             .firstWhere(
+  //                                               (p) => p.id == productId,
+  //                                             );
+  //                                         _selectedProducts.add(
+  //                                           Product(
+  //                                             id: product.id,
+  //                                             code: product.code,
+  //                                             name: product.name,
+  //                                             nameKhmer: product.nameKhmer,
+  //                                             price: product.price,
+  //                                             quantity: 1,
+  //                                           ),
+  //                                         );
+  //                                       }
+  //                                     }
+  //                                   });
+  //                                   Navigator.pop(context);
+  //                                 },
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: Colors.red,
+  //                             foregroundColor: Colors.white,
+  //                             padding: EdgeInsets.symmetric(vertical: 14),
+  //                             shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                           ),
+  //                           child: Text(
+  //                             tempSelectedIds.isEmpty
+  //                                 ? 'Select Products'
+  //                                 : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
+  //                             style: TextStyle(
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
   //               ),
-  //             ],
-  //           ),
-  //         ),
+  //             ),
+  //           );
+  //         },
   //       );
   //     },
   //   );
   // }
+  // Replace the _showProductSelection method with this updated version:
 
-  void _showProductSelection() {
-    // Create a local copy to track temporary selections
-    List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
+void _showProductSelection() {
+  List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.9,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    // Header with selection count
-                    Row(
-                      children: [
-                        Icon(Icons.add_shopping_cart, color: Colors.red),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setDialogState) {
+          return Dialog(
+            insetPadding: EdgeInsets.zero, // Remove default margins
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero, // Remove rounded corners
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width, // Full screen width
+              height: MediaQuery.of(context).size.height, // Full screen height
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // Header with selection count
+                  Row(
+                    children: [
+                      Icon(Icons.add_shopping_cart, color: Colors.red),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Add Products',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (tempSelectedIds.isNotEmpty)
                               Text(
-                                'Add Products',
+                                '${tempSelectedIds.length} product(s) selected',
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              if (tempSelectedIds.isNotEmpty)
-                                Text(
-                                  '${tempSelectedIds.length} product(s) selected',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                            ],
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // Select All / Deselect All buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            setDialogState(() {
+                              if (tempSelectedIds.length == _availableProducts.length) {
+                                // Deselect all
+                                tempSelectedIds.clear();
+                              } else {
+                                // Select all
+                                tempSelectedIds = _availableProducts.map((p) => p.id).toList();
+                              }
+                            });
+                          },
+                          icon: Icon(
+                            tempSelectedIds.length == _availableProducts.length
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            size: 18,
+                          ),
+                          label: Text(
+                            tempSelectedIds.length == _availableProducts.length
+                                ? 'Deselect All'
+                                : 'Select All',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.close),
+                      ),
+                      SizedBox(width: 12),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.blue[200]!),
                         ),
-                      ],
-                    ),
+                        child: Text(
+                          '${tempSelectedIds.length}/${_availableProducts.length}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[800],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
-                    SizedBox(height: 16),
+                  SizedBox(height: 16),
 
-                    // Select All / Deselect All buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () {
+                  // Product list with checkboxes
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _availableProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = _availableProducts[index];
+                        final isSelected = tempSelectedIds.contains(product.id);
+
+                        return Card(
+                          margin: EdgeInsets.only(bottom: 8),
+                          elevation: isSelected ? 3 : 1,
+                          color: isSelected ? Colors.blue[50] : Colors.white,
+                          child: ListTile(
+                            onTap: () {
                               setDialogState(() {
-                                if (tempSelectedIds.length ==
-                                    _availableProducts.length) {
-                                  // Deselect all
-                                  tempSelectedIds.clear();
+                                if (isSelected) {
+                                  tempSelectedIds.remove(product.id);
                                 } else {
-                                  // Select all
-                                  tempSelectedIds = _availableProducts
-                                      .map((p) => p.id)
-                                      .toList();
+                                  tempSelectedIds.add(product.id);
                                 }
                               });
                             },
-                            icon: Icon(
-                              tempSelectedIds.length ==
-                                      _availableProducts.length
-                                  ? Icons.check_box
-                                  : Icons.check_box_outline_blank,
-                              size: 18,
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Checkbox
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? Colors.blue : Colors.transparent,
+                                    border: Border.all(
+                                      color: isSelected ? Colors.blue : Colors.grey,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: isSelected
+                                      ? Icon(
+                                          Icons.check,
+                                          size: 16,
+                                          color: Colors.white,
+                                        )
+                                      : null,
+                                ),
+                                SizedBox(width: 12),
+                                // Product icon
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red[100],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.local_cafe,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
                             ),
-                            label: Text(
-                              tempSelectedIds.length ==
-                                      _availableProducts.length
-                                  ? 'Deselect All'
-                                  : 'Select All',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                            title: Text(
+                              '${product.code} - ${product.name}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: isSelected ? Colors.blue[800] : Colors.black,
                               ),
                             ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.nameKhmer,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isSelected ? Colors.blue[600] : Colors.grey[600],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '\$${product.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: isSelected
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      'Selected',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                : null,
                           ),
-                        ),
-                        SizedBox(width: 12),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.blue[200]!),
+                        );
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // Action buttons
+                  Row(
+                    children: [
+                    
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: tempSelectedIds.isEmpty ? null : () {
+                            setState(() {
+                              // Remove products that are no longer selected
+                              _selectedProducts.removeWhere(
+                                (product) => !tempSelectedIds.contains(product.id),
+                              );
+
+                              // Add newly selected products
+                              for (String productId in tempSelectedIds) {
+                                if (!_selectedProducts.any((p) => p.id == productId)) {
+                                  final product = _availableProducts.firstWhere(
+                                    (p) => p.id == productId,
+                                  );
+                                  _selectedProducts.add(Product(
+                                    id: product.id,
+                                    code: product.code,
+                                    name: product.name,
+                                    nameKhmer: product.nameKhmer,
+                                    price: product.price,
+                                    quantity: 1,
+                                  ));
+                                }
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           child: Text(
-                            '${tempSelectedIds.length}/${_availableProducts.length}',
+                            tempSelectedIds.isEmpty
+                                ? 'Select Products'
+                                : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue[800],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-
-                    SizedBox(height: 16),
-
-                    // Product list with checkboxes
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _availableProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = _availableProducts[index];
-                          final isSelected = tempSelectedIds.contains(
-                            product.id,
-                          );
-
-                          return Card(
-                            margin: EdgeInsets.only(bottom: 8),
-                            elevation: isSelected ? 3 : 1,
-                            color: isSelected ? Colors.blue[50] : Colors.white,
-                            child: ListTile(
-                              onTap: () {
-                                setDialogState(() {
-                                  if (isSelected) {
-                                    tempSelectedIds.remove(product.id);
-                                  } else {
-                                    tempSelectedIds.add(product.id);
-                                  }
-                                });
-                              },
-                              leading: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Checkbox
-                                  // Container(
-                                  //   width: 24,
-                                  //   height: 24,
-                                  //   decoration: BoxDecoration(
-                                  //     color: isSelected ? Colors.blue : Colors.transparent,
-                                  //     border: Border.all(
-                                  //       color: isSelected ? Colors.blue : Colors.grey,
-                                  //       width: 2,
-                                  //     ),
-                                  //     borderRadius: BorderRadius.circular(4),
-                                  //   ),
-                                  //   child: isSelected
-                                  //       ? Icon(
-                                  //           Icons.check,
-                                  //           size: 16,
-                                  //           color: Colors.white,
-                                  //         )
-                                  //       : null,
-                                  // ),
-                                  SizedBox(width: 12),
-                                  // Product icon
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red[100],
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      Icons.local_cafe,
-                                      color: Colors.red,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              title: Text(
-                                '${product.code} - ${product.name}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: isSelected
-                                      ? Colors.blue[800]
-                                      : Colors.black,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.nameKhmer,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: isSelected
-                                          ? Colors.blue[600]
-                                          : Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '\$${product.price.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              trailing: isSelected
-                                  ? Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                    )
-                                  : null,
-                            ),
-                          );
-                        },
                       ),
-                    ),
-
-                    SizedBox(height: 16),
-
-                    // Action buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: OutlinedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 14),
-                              side: BorderSide(color: Colors.grey),
-                            ),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          flex: 2,
-                          child: ElevatedButton(
-                            onPressed: tempSelectedIds.isEmpty
-                                ? null
-                                : () {
-                                    setState(() {
-                                      // Remove products that are no longer selected
-                                      _selectedProducts.removeWhere(
-                                        (product) => !tempSelectedIds.contains(
-                                          product.id,
-                                        ),
-                                      );
-
-                                      // Add newly selected products
-                                      for (String productId
-                                          in tempSelectedIds) {
-                                        if (!_selectedProducts.any(
-                                          (p) => p.id == productId,
-                                        )) {
-                                          final product = _availableProducts
-                                              .firstWhere(
-                                                (p) => p.id == productId,
-                                              );
-                                          _selectedProducts.add(
-                                            Product(
-                                              id: product.id,
-                                              code: product.code,
-                                              name: product.name,
-                                              nameKhmer: product.nameKhmer,
-                                              price: product.price,
-                                              quantity: 1,
-                                            ),
-                                          );
-                                        }
-                                      }
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              tempSelectedIds.isEmpty
-                                  ? 'Select Products'
-                                  : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
   // Show date time picker
   Future<void> _selectDateTime() async {
@@ -793,11 +970,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                     // Date Time Section
                     Container(
                       padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
                       child: Row(
                         children: [
                           Icon(Icons.calendar_today, color: Colors.grey[600]),
@@ -875,7 +1047,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
 
                     // Add Product Button
                     Container(
-                      width: double.infinity,
+                      width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                         onPressed: _showProductSelection,
                         style: ElevatedButton.styleFrom(
