@@ -228,13 +228,13 @@ class _CartScreenState extends State<CartScreen> {
         children: [
           // Product Image
           Container(
-            width: 60,
-            height: 60,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
-              color: Colors.orange[100],
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.red[100],
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(Icons.local_cafe, color: Colors.orange[600], size: 30),
+            child: Icon(Icons.local_cafe, color: Colors.red[600], size: 16),
           ),
 
           SizedBox(width: 16),
@@ -356,7 +356,7 @@ class _CartScreenState extends State<CartScreen> {
             child: Text(
               'Apply',
               style: TextStyle(
-                color: Colors.green[600],
+                color: Colors.blue[600],
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -420,7 +420,7 @@ class _CartScreenState extends State<CartScreen> {
           style: TextStyle(
             fontSize: isTotal ? 18 : 16,
             fontWeight: FontWeight.bold,
-            color: isTotal ? Colors.green[600] : Colors.black,
+            color: isTotal ? Colors.blue[600] : Colors.black,
           ),
         ),
       ],
@@ -448,7 +448,7 @@ class _CartScreenState extends State<CartScreen> {
           child: ElevatedButton(
             onPressed: _cartProducts.isEmpty ? null : _proceedToCheckout,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[500],
+              backgroundColor: Colors.red[500],
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),

@@ -29,40 +29,36 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     models.Outlet(id: '3', name: 'Branch B', address: 'BKK1 District'),
   ];
 
- final List<models.Product> _availableProducts = [
-  models.Product(
-    id: '1',
-    code: '10110',
-    name: 'Premium Coffee Beans',
-    nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
-    price: 25.50,
-    localImagePath: 'assets/images/1.jpg', // Add image path
-  ),
-  models.Product(
-    id: '2',
-    code: '10111',
-    name: 'Organic Tea Leaves',
-    nameKhmer: 'ស្លឹកតែធម្មជាតិ',
-    price: 18.75,
-    localImagePath: 'assets/images/2.jpg', // Add image path
-  ),
-  models.Product(
-    id: '3',
-    code: '10112',
-    name: 'Fresh Milk',
-    nameKhmer: 'ទឹកដោះគោស្រស់',
-    price: 12.00,
-    localImagePath: 'assets/images/milk.png', // Add image path
-  ),
-  models.Product(
-    id: '4',
-    code: '10113',
-    name: 'Chocolate Powder',
-    nameKhmer: 'ម្សៅសូកូឡា',
-    price: 22.30,
-    localImagePath: 'assets/images/chocolate.png', // Add image path
-  ),
-];
+  final List<models.Product> _availableProducts = [
+    models.Product(
+      id: '1',
+      code: '10110',
+      name: 'Premium Coffee Beans',
+      nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
+      price: 25.50,
+    ),
+    models.Product(
+      id: '2',
+      code: '10111',
+      name: 'Organic Tea Leaves',
+      nameKhmer: 'ស្លឹកតែធម្មជាតិ',
+      price: 18.75,
+    ),
+    models.Product(
+      id: '3',
+      code: '10112',
+      name: 'Fresh Milk',
+      nameKhmer: 'ទឹកដោះគោស្រស់',
+      price: 12.00,
+    ),
+    models.Product(
+      id: '4',
+      code: '10113',
+      name: 'Chocolate Powder',
+      nameKhmer: 'ម្សៅសូកូឡា',
+      price: 22.30,
+    ),
+  ];
 
   @override
   void initState() {
@@ -169,331 +165,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     );
   }
 
-  // void _showProductSelection() {
-  //   List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (context, setDialogState) {
-  //           return Dialog(
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(15),
-  //             ),
-  //             child: Container(
-  //              width: MediaQuery.of(context).size.width,  // ← Full width
-  //   height: MediaQuery.of(context).size.height, // ← Full height
-  //   // ...
-  //               padding: EdgeInsets.all(20),
-  //               child: Column(
-  //                 children: [
-  //                   // Header with selection count
-  //                   Row(
-  //                     children: [
-  //                       Icon(Icons.add_shopping_cart, color: Colors.red),
-  //                       SizedBox(width: 12),
-  //                       Expanded(
-  //                         child: Column(
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Text(
-  //                               'Add Products',
-  //                               style: TextStyle(
-  //                                 fontSize: 20,
-  //                                 fontWeight: FontWeight.bold,
-  //                               ),
-  //                             ),
-  //                             if (tempSelectedIds.isNotEmpty)
-  //                               Text(
-  //                                 '${tempSelectedIds.length} product(s) selected',
-  //                                 style: TextStyle(
-  //                                   fontSize: 12,
-  //                                   color: Colors.blue,
-  //                                   fontWeight: FontWeight.w500,
-  //                                 ),
-  //                               ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                       IconButton(
-  //                         onPressed: () => Navigator.pop(context),
-  //                         icon: Icon(Icons.close),
-  //                       ),
-  //                     ],
-  //                   ),
-
-  //                   SizedBox(height: 16),
-
-  //                   // Select All / Deselect All buttons
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: OutlinedButton.icon(
-  //                           onPressed: () {
-  //                             setDialogState(() {
-  //                               if (tempSelectedIds.length ==
-  //                                   _availableProducts.length) {
-  //                                 // Deselect all
-  //                                 tempSelectedIds.clear();
-  //                               } else {
-  //                                 // Select all
-  //                                 tempSelectedIds = _availableProducts
-  //                                     .map((p) => p.id)
-  //                                     .toList();
-  //                               }
-  //                             });
-  //                           },
-  //                           icon: Icon(
-  //                             tempSelectedIds.length ==
-  //                                     _availableProducts.length
-  //                                 ? Icons.check_box
-  //                                 : Icons.check_box_outline_blank,
-  //                             size: 18,
-  //                           ),
-  //                           label: Text(
-  //                             tempSelectedIds.length ==
-  //                                     _availableProducts.length
-  //                                 ? 'Deselect All'
-  //                                 : 'Select All',
-  //                             style: TextStyle(fontSize: 12),
-  //                           ),
-  //                           style: OutlinedButton.styleFrom(
-  //                             padding: EdgeInsets.symmetric(
-  //                               horizontal: 12,
-  //                               vertical: 8,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       SizedBox(width: 12),
-  //                       Container(
-  //                         padding: EdgeInsets.symmetric(
-  //                           horizontal: 12,
-  //                           vertical: 8,
-  //                         ),
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.blue[50],
-  //                           borderRadius: BorderRadius.circular(20),
-  //                           border: Border.all(color: Colors.blue[200]!),
-  //                         ),
-  //                         child: Text(
-  //                           '${tempSelectedIds.length}/${_availableProducts.length}',
-  //                           style: TextStyle(
-  //                             fontSize: 12,
-  //                             fontWeight: FontWeight.bold,
-  //                             color: Colors.blue[800],
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-
-  //                   SizedBox(height: 16),
-
-  //                   // Product list with checkboxes
-  //                   Expanded(
-  //                     child: ListView.builder(
-  //                       itemCount: _availableProducts.length,
-  //                       itemBuilder: (context, index) {
-  //                         final product = _availableProducts[index];
-  //                         final isSelected = tempSelectedIds.contains(
-  //                           product.id,
-  //                         );
-
-  //                         return Card(
-  //                           margin: EdgeInsets.only(bottom: 8),
-  //                           elevation: isSelected ? 3 : 1,
-  //                           color: isSelected ? Colors.blue[50] : Colors.white,
-  //                           child: ListTile(
-  //                             onTap: () {
-  //                               setDialogState(() {
-  //                                 if (isSelected) {
-  //                                   tempSelectedIds.remove(product.id);
-  //                                 } else {
-  //                                   tempSelectedIds.add(product.id);
-  //                                 }
-  //                               });
-  //                             },
-  //                             leading: Row(
-  //                               mainAxisSize: MainAxisSize.min,
-  //                               children: [
-  //                                 // Checkbox
-  //                                 // Container(
-  //                                 //   width: 24,
-  //                                 //   height: 24,
-  //                                 //   decoration: BoxDecoration(
-  //                                 //     color: isSelected ? Colors.blue : Colors.transparent,
-  //                                 //     border: Border.all(
-  //                                 //       color: isSelected ? Colors.blue : Colors.grey,
-  //                                 //       width: 2,
-  //                                 //     ),
-  //                                 //     borderRadius: BorderRadius.circular(4),
-  //                                 //   ),
-  //                                 //   child: isSelected
-  //                                 //       ? Icon(
-  //                                 //           Icons.check,
-  //                                 //           size: 16,
-  //                                 //           color: Colors.white,
-  //                                 //         )
-  //                                 //       : null,
-  //                                 // ),
-  //                                 SizedBox(width: 12),
-  //                                 // Product icon
-  //                                 Container(
-  //                                   width: 40,
-  //                                   height: 40,
-  //                                   decoration: BoxDecoration(
-  //                                     color: Colors.red[100],
-  //                                     borderRadius: BorderRadius.circular(8),
-  //                                   ),
-  //                                   child: Icon(
-  //                                     Icons.local_cafe,
-  //                                     color: Colors.red,
-  //                                     size: 20,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                             title: Text(
-  //                               '${product.code} - ${product.name}',
-  //                               style: TextStyle(
-  //                                 fontWeight: FontWeight.w600,
-  //                                 fontSize: 14,
-  //                                 color: isSelected
-  //                                     ? Colors.blue[800]
-  //                                     : Colors.black,
-  //                               ),
-  //                             ),
-  //                             subtitle: Column(
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Text(
-  //                                   product.nameKhmer,
-  //                                   style: TextStyle(
-  //                                     fontSize: 12,
-  //                                     color: isSelected
-  //                                         ? Colors.blue[600]
-  //                                         : Colors.grey[600],
-  //                                   ),
-  //                                 ),
-  //                                 SizedBox(height: 4),
-  //                                 Text(
-  //                                   '\$${product.price.toStringAsFixed(2)}',
-  //                                   style: TextStyle(
-  //                                     color: Colors.green,
-  //                                     fontWeight: FontWeight.bold,
-  //                                     fontSize: 12,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                             trailing: isSelected
-  //                                 ? Icon(
-  //                                     Icons.check_circle,
-  //                                     color: Colors.green,
-  //                                   )
-  //                                 : null,
-  //                           ),
-  //                         );
-  //                       },
-  //                     ),
-  //                   ),
-
-  //                   SizedBox(height: 16),
-
-  //                   // Action buttons
-  //                   Row(
-  //                     children: [
-  //                       // Expanded(
-  //                       // child: OutlinedButton(
-  //                       //   onPressed: () => Navigator.pop(context),
-  //                       //   style: OutlinedButton.styleFrom(
-  //                       //     padding: EdgeInsets.symmetric(vertical: 14),
-  //                       //     side: BorderSide(color: Colors.grey),
-  //                       //   ),
-  //                       //   child: Text(
-  //                       //     'Cancel',
-  //                       //     style: TextStyle(
-  //                       //       fontSize: 16,
-  //                       //       fontWeight: FontWeight.w600,
-  //                       //       color: Colors.grey[700],
-  //                       //     ),
-  //                       //   ),
-  //                       // ),
-  //                       // ),
-  //                       SizedBox(width: 12),
-  //                       Expanded(
-  //                         flex: 2,
-  //                         child: ElevatedButton(
-  //                           onPressed: tempSelectedIds.isEmpty
-  //                               ? null
-  //                               : () {
-  //                                   setState(() {
-  //                                     // Remove products that are no longer selected
-  //                                     _selectedProducts.removeWhere(
-  //                                       (product) => !tempSelectedIds.contains(
-  //                                         product.id,
-  //                                       ),
-  //                                     );
-
-  //                                     // Add newly selected products
-  //                                     for (String productId
-  //                                         in tempSelectedIds) {
-  //                                       if (!_selectedProducts.any(
-  //                                         (p) => p.id == productId,
-  //                                       )) {
-  //                                         final product = _availableProducts
-  //                                             .firstWhere(
-  //                                               (p) => p.id == productId,
-  //                                             );
-  //                                         _selectedProducts.add(
-  //                                           Product(
-  //                                             id: product.id,
-  //                                             code: product.code,
-  //                                             name: product.name,
-  //                                             nameKhmer: product.nameKhmer,
-  //                                             price: product.price,
-  //                                             quantity: 1,
-  //                                           ),
-  //                                         );
-  //                                       }
-  //                                     }
-  //                                   });
-  //                                   Navigator.pop(context);
-  //                                 },
-  //                           style: ElevatedButton.styleFrom(
-  //                             backgroundColor: Colors.red,
-  //                             foregroundColor: Colors.white,
-  //                             padding: EdgeInsets.symmetric(vertical: 14),
-  //                             shape: RoundedRectangleBorder(
-  //                               borderRadius: BorderRadius.circular(8),
-  //                             ),
-  //                           ),
-  //                           child: Text(
-  //                             tempSelectedIds.isEmpty
-  //                                 ? 'Select Products'
-  //                                 : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
-  //                             style: TextStyle(
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w600,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-  // Replace the _showProductSelection method with this updated version:
-
   void _showProductSelection() {
     List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
 
@@ -503,203 +174,186 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return Dialog(
-              insetPadding: EdgeInsets.zero, // Remove default margins
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero, // Remove rounded corners
-              ),
+              insetPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: Container(
-                width: MediaQuery.of(context).size.width, // Full screen width
-                height: MediaQuery.of(
-                  context,
-                ).size.height, // Full screen height
-                padding: EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.black,
                 child: Column(
                   children: [
-                    // Header with selection count
-                    Row(
-                      children: [
-                        Icon(Icons.add_shopping_cart, color: Colors.red),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Add Products',
+                    // Header with red background
+                    Container(
+                      color: Colors.red,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: SafeArea(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: Icon(Icons.close, color: Colors.white),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Product',
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ),
-                              if (tempSelectedIds.isNotEmpty)
-                                Text(
-                                  '${tempSelectedIds.length} product(s) selected',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.close),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 16),
-
-                    // Select All / Deselect All buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              setDialogState(() {
-                                if (tempSelectedIds.length ==
-                                    _availableProducts.length) {
-                                  // Deselect all
-                                  tempSelectedIds.clear();
-                                } else {
-                                  // Select all
-                                  tempSelectedIds = _availableProducts
-                                      .map((p) => p.id)
-                                      .toList();
-                                }
-                              });
-                            },
-                            icon: Icon(
-                              tempSelectedIds.length ==
-                                      _availableProducts.length
-                                  ? Icons.check_box
-                                  : Icons.check_box_outline_blank,
-                              size: 18,
-                            ),
-                            label: Text(
-                              tempSelectedIds.length ==
-                                      _availableProducts.length
-                                  ? 'Deselect All'
-                                  : 'Select All',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                          ),
+                            SizedBox(width: 48), // Balance the close button
+                          ],
                         ),
-                        SizedBox(width: 12),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.blue[200]!),
-                          ),
-                          child: Text(
-                            '${tempSelectedIds.length}/${_availableProducts.length}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue[800],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 16),
-
-                    // Product list with checkboxes
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _availableProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = _availableProducts[index];
-                          final isSelected = tempSelectedIds.contains(
-                            product.id,
-                          );
-
-                          return Card(
-                            margin: EdgeInsets.only(bottom: 8),
-                            elevation: isSelected ? 3 : 1,
-                            color: isSelected ? Colors.blue[50] : Colors.white,
-                            child: ListTile(
-                              onTap: () {
-                                setDialogState(() {
-                                  if (isSelected) {
-                                    tempSelectedIds.remove(product.id);
-                                  } else {
-                                    tempSelectedIds.add(product.id);
-                                  }
-                                });
-                              },
-                              leading: Row(mainAxisSize: MainAxisSize.min),
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${product.code} :  ${product.name}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      color: const Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                ],
-                              ),
-
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Text(
-                                  //   product.nameKhmer,
-                                  //   style: TextStyle(
-                                  //     fontSize: 12,
-                                  //     color: isSelected
-                                  //         ? Colors.blue[600]
-                                  //         : Colors.grey[600],
-                                  //   ),
-                                  // ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    '\$${product.price.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              trailing: isSelected
-                                  ? Icon(
-                                      Icons.check_circle,
-                                      color: Colors.orange[800],
-                                    )
-                                  : null,
-                            ),
-                          );
-                        },
                       ),
                     ),
 
-                    SizedBox(height: 16),
+                    // Search bar
+                    Container(
+                      color: Colors.black,
+                      padding: EdgeInsets.all(16),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[800],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: TextField(
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey[400],
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
 
-                    // Action buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
+                    // Category tabs
+                    Container(color: Colors.black),
+
+                    // Product list
+                    Expanded(
+                      child: Container(
+                        color: Colors.black,
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          itemCount: _availableProducts.length,
+                          itemBuilder: (context, index) {
+                            final product = _availableProducts[index];
+                            final isSelected = tempSelectedIds.contains(
+                              product.id,
+                            );
+
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 12),
+                              child: ListTile(
+                                onTap: () {
+                                  setDialogState(() {
+                                    if (isSelected) {
+                                      tempSelectedIds.remove(product.id);
+                                    } else {
+                                      tempSelectedIds.add(product.id);
+                                    }
+                                  });
+                                },
+                                leading: Container(
+                                  width: 30,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[800],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: product.localImagePath != null
+                                        ? Image.asset(
+                                            product.localImagePath!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Icon(
+                                                    Icons.local_cafe,
+                                                    color: Colors.white,
+                                                    size: 24,
+                                                  );
+                                                },
+                                          )
+                                        : Icon(
+                                            Icons.local_cafe,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                  ),
+                                ),
+                                title: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${product.code}\'${product.name.split(' ').take(2).join(' ')} ',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      // TextSpan(
+                                      //   text: '(${product.nameKhmer})',
+                                      //   style: TextStyle(
+                                      //     color: Colors.white,
+                                      //     fontSize: 12,
+                                      //   ),
+                                      // ),
+                                    ],
+                                  ),
+                                ),
+                                trailing: isSelected
+                                    ? Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                          size: 18,
+                                        ),
+                                      )
+                                    : null,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                  vertical: 8,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // Bottom button
+                    Container(
+                      color: Colors.black,
+                      padding: EdgeInsets.all(16),
+                      child: SafeArea(
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 48,
                           child: ElevatedButton(
                             onPressed: tempSelectedIds.isEmpty
                                 ? null
@@ -729,6 +383,8 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                               name: product.name,
                                               nameKhmer: product.nameKhmer,
                                               price: product.price,
+                                              localImagePath:
+                                                  product.localImagePath,
                                               quantity: 1,
                                             ),
                                           );
@@ -740,15 +396,15 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
+                              disabledBackgroundColor: Colors.grey[700],
                             ),
                             child: Text(
                               tempSelectedIds.isEmpty
-                                  ? 'Select Products'
-                                  : 'Add ${tempSelectedIds.length} Product${tempSelectedIds.length == 1 ? '' : 's'}',
+                                  ? 'Add(0)'
+                                  : 'Add(${tempSelectedIds.length})',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -756,7 +412,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -1002,7 +658,9 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
 
                     SizedBox(height: 20),
 
-                
+                    // Selected Products List
+                    // Replace the selected products section (around lines 1000-1200) with this updated version:
+
                     // Selected Products List
                     if (_selectedProducts.isNotEmpty) ...[
                       Text(
@@ -1508,6 +1166,8 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
 
 // Usage example
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
