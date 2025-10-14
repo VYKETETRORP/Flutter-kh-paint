@@ -40,6 +40,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       name: 'Premium Coffee Beans',
       nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
       price: 25.50,
+      localImagePath: 'assets/1.jpg',
     ),
     models.Product(
       id: '2',
@@ -47,6 +48,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       name: 'Organic Tea Leaves',
       nameKhmer: 'ស្លឹកតែធម្មជាតិ',
       price: 18.75,
+      localImagePath: 'assets/2.jpg',
     ),
     models.Product(
       id: '3',
@@ -54,6 +56,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       name: 'Fresh Milk',
       nameKhmer: 'ទឹកដោះគោស្រស់',
       price: 12.00,
+      localImagePath: 'assets/3.jpg',
     ),
     models.Product(
       id: '4',
@@ -61,29 +64,31 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       name: 'Chocolate Powder',
       nameKhmer: 'ម្សៅសូកូឡា',
       price: 22.30,
+      localImagePath: 'assets/4.jpg',
     ),
   ];
 
-
-    @override
+  @override
   void initState() {
     super.initState();
     // Initialize filtered products
     _filteredProducts = _availableProducts;
-    
+
     // Add initial products to match the screenshot (if needed)
     // ... your existing initState code
   }
 
-   void _filterProducts(String query) {
+  void _filterProducts(String query) {
     setState(() {
       if (query.isEmpty) {
         _filteredProducts = _availableProducts;
       } else {
         _filteredProducts = _availableProducts
-            .where((product) =>
-                product.name.toLowerCase().contains(query.toLowerCase()) ||
-                product.code.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (product) =>
+                  product.name.toLowerCase().contains(query.toLowerCase()) ||
+                  product.code.toLowerCase().contains(query.toLowerCase()),
+            )
             .toList();
       }
     });
@@ -188,7 +193,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
 
   void _showProductSelection() {
     List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
- _filteredProducts = _availableProducts;
+    _filteredProducts = _availableProducts;
     searchController.clear();
     showDialog(
       context: context,
@@ -246,14 +251,23 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                         ),
                         child: TextField(
                           controller: searchController,
-                          onChanged: (query){
-                            setDialogState((){
-                              if(query.isEmpty){
+                          onChanged: (query) {
+                            setDialogState(() {
+                              if (query.isEmpty) {
                                 _filteredProducts = _availableProducts;
-                              }else{
-                                _filteredProducts= _availableProducts.where((product) => product.name.toLowerCase().contains(query.toLowerCase()) || product.code.toLowerCase().contains(query.toLowerCase())).toList();
+                              } else {
+                                _filteredProducts = _availableProducts
+                                    .where(
+                                      (product) =>
+                                          product.name.toLowerCase().contains(
+                                            query.toLowerCase(),
+                                          ) ||
+                                          product.code.toLowerCase().contains(
+                                            query.toLowerCase(),
+                                          ),
+                                    )
+                                    .toList();
                               }
-
                             });
                           },
 
@@ -292,9 +306,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             );
 
                             return Container(
-                              margin: EdgeInsets.only(
-                                bottom: 4,
-                              ),
+                              margin: EdgeInsets.only(bottom: 4),
                               child: ListTile(
                                 onTap: () {
                                   setDialogState(() {
@@ -314,7 +326,9 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
-                                    child: product.localImagePath != null
+                                    child:
+                                        product.localImagePath != null &&
+                                            product.localImagePath!.isNotEmpty
                                         ? Image.asset(
                                             product.localImagePath!,
                                             fit: BoxFit.cover,
@@ -703,9 +717,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                     SizedBox(height: 20),
 
                     // Selected Products List
-                    // Replace the selected products section (around lines 1000-1200) with this updated version:
-
-                    // Selected Products List
                     if (_selectedProducts.isNotEmpty) ...[
                       Text(
                         'Selected Products (${_selectedProducts.length})',
@@ -824,7 +835,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             // Store the removed product for undo functionality
                             final removedProduct = product;
                             final removedIndex = index;
-
                             // Remove the product
                             setState(() {
                               _selectedProducts.removeAt(index);
@@ -947,15 +957,36 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                 // Product icon
                                 Container(
                                   width: 40,
-                                  height: 40,
+                                  height: 50,
                                   decoration: BoxDecoration(
-                                    color: Colors.red[100],
+                                    color: Colors.grey[200],
                                     borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.grey[300]!,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    Icons.local_cafe,
-                                    color: Colors.red,
-                                    size: 20,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child:
+                                        product.localImagePath != null &&
+                                            product.localImagePath!.isNotEmpty
+                                        ? Image.asset(
+                                            product.localImagePath!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Icon(
+                                                    Icons.local_cafe,
+                                                    color: Colors.white,
+                                                    size: 24,
+                                                  );
+                                                },
+                                          )
+                                        : Icon(
+                                            Icons.local_cafe,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
                                   ),
                                 ),
 
@@ -1206,9 +1237,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       ),
     );
   }
-
-
-
 }
 
 // Usage example

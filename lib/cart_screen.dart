@@ -234,9 +234,15 @@ class _CartScreenState extends State<CartScreen> {
               color: Colors.red[100],
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(Icons.local_cafe, color: Colors.red[600], size: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child:
+                  product.localImagePath != null &&
+                      product.localImagePath!.isNotEmpty
+                  ? Image.asset(product.localImagePath!, fit: BoxFit.cover)
+                  : Icon(Icons.image_not_supported, color: Colors.grey[400]),
+            ),
           ),
-
           SizedBox(width: 16),
 
           // Product Details
