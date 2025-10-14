@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'cart_screen.dart';
 import 'item_screen.dart';
 import 'models.dart' as models;
+import 'package:test_form/widgets/outlet_screen.dart';
 
 // Product model
 
@@ -65,24 +66,24 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
   void initState() {
     super.initState();
     // Add initial products to match the screenshot
-    _selectedProducts = [
-      models.Product(
-        id: '1',
-        code: '10110',
-        name: 'Premium Coffee Beans',
-        nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
-        price: 25.50,
-        quantity: 1,
-      ),
-      models.Product(
-        id: '2',
-        code: '10111',
-        name: 'Organic Tea Leaves',
-        nameKhmer: 'ស្លឹកតែធម្មជាតិ',
-        price: 18.75,
-        quantity: 1,
-      ),
-    ];
+    // _selectedProducts = [
+    //   models.Product(
+    //     id: '1',
+    //     code: '10110',
+    //     name: 'Premium Coffee Beans',
+    //     nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
+    //     price: 25.50,
+    //     quantity: 1,
+    //   ),
+    //   models.Product(
+    //     id: '2',
+    //     code: '10111',
+    //     name: 'Organic Tea Leaves',
+    //     nameKhmer: 'ស្លឹកតែធម្មជាតិ',
+    //     price: 18.75,
+    //     quantity: 1,
+    //   ),
+    // ];
   }
 
   @override
@@ -98,73 +99,87 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       (sum, product) => sum + (product.price * product.quantity),
     );
   }
-
-  // Show outlet selection dialog
-  void _showOutletSelection() {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+void _showOutletSelection() {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => OutletSelectionScreen(
+        outlets: _outlets,
+        selectedOutlet: _selectedOutlet,
+        onOutletSelected: (outlet) {
+          setState(() {
+            _selectedOutlet = outlet;
+          });
+        },
       ),
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.store, color: Colors.blue),
-                  SizedBox(width: 12),
-                  Text(
-                    'Choose Outlet',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.close),
-                  ),
-                ],
-              ),
+    ),
+  );
+}
+  // void _showOutletSelection() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         padding: EdgeInsets.all(20),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Row(
+  //               children: [
+  //                 Icon(Icons.store, color: Colors.blue),
+  //                 SizedBox(width: 12),
+  //                 Text(
+  //                   'Choose Outlet',
+  //                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 Spacer(),
+  //                 IconButton(
+  //                   onPressed: () => Navigator.pop(context),
+  //                   icon: Icon(Icons.close),
+  //                 ),
+  //               ],
+  //             ),
 
-              SizedBox(height: 16),
+  //             SizedBox(height: 16),
 
-              ..._outlets.map((outlet) {
-                return ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(Icons.store, color: Colors.blue),
-                  ),
-                  title: Text(
-                    outlet.name,
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(outlet.address),
-                  trailing: _selectedOutlet?.id == outlet.id
-                      ? Icon(Icons.check_circle, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    setState(() {
-                      _selectedOutlet = outlet;
-                    });
-                    Navigator.pop(context);
-                  },
-                );
-              }).toList(),
+  //             ..._outlets.map((outlet) {
+  //               return ListTile(
+  //                 leading: Container(
+  //                   padding: EdgeInsets.all(8),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.blue[100],
+  //                     borderRadius: BorderRadius.circular(8),
+  //                   ),
+  //                   child: Icon(Icons.store, color: Colors.blue),
+  //                 ),
+  //                 title: Text(
+  //                   outlet.name,
+  //                   style: TextStyle(fontWeight: FontWeight.w600),
+  //                 ),
+  //                 subtitle: Text(outlet.address),
+  //                 trailing: _selectedOutlet?.id == outlet.id
+  //                     ? Icon(Icons.check_circle, color: Colors.green)
+  //                     : null,
+  //                 onTap: () {
+  //                   setState(() {
+  //                     _selectedOutlet = outlet;
+  //                   });
+  //                   Navigator.pop(context);
+  //                 },
+  //               );
+  //             }).toList(),
 
-              SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  //             SizedBox(height: 20),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void _showProductSelection() {
     List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
@@ -1101,7 +1116,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                         ),
                       ),
                     ],
-                    SizedBox(height: 100), // Space for submit button
+                    SizedBox(height: 100), 
                   ],
                 ),
               ),

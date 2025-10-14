@@ -7,6 +7,7 @@ import 'services/language_service.dart';
 import 'login.dart';
 import 'create_sale_form.dart';
 import 'item_screen.dart';
+import 'package:test_form/widgets/outlet_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
