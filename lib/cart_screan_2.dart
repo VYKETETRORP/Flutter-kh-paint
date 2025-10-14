@@ -18,19 +18,19 @@ class _CartScreenState extends State<CartScreen> {
       name: '96. Jasmine Rice',
       price: 0.88,
       originalPrice: null,
-      image: 'assets/images/jasmine_rice.jpg',
+      image: 'assets/2.jpg',
     ),
     PopularItem(
       name: '17. Iced Cappuccino',
       price: 1.89,
       originalPrice: 3.78,
-      image: 'assets/images/iced_cappuccino.jpg',
+      image: 'assets/1.jpg',
     ),
     PopularItem(
       name: '76. Grilled Pork',
       price: 5.29,
       originalPrice: null,
-      image: 'assets/images/grilled_pork.jpg',
+      image: 'assets/3.jpg',
     ),
   ];
 
@@ -46,7 +46,7 @@ class _CartScreenState extends State<CartScreen> {
           price: 1.62,
           originalPrice: 3.24,
           quantity: 1,
-          image: 'assets/images/thai_iced_tea.jpg',
+          image: 'assets/4.jpg',
         ),
       );
     }
@@ -154,9 +154,6 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   SizedBox(height: 16),
 
-                 
-
-
                   // Cart items
                   ...cartItems.asMap().entries.map((entry) {
                     int index = entry.key;
@@ -230,8 +227,10 @@ class _CartScreenState extends State<CartScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
+                                            icon: item.quantity > 1
+                                                ? Icon(Icons.remove, size: 18)
+                                                : Icon(Icons.delete_outline, size: 18),
                                             onPressed: () => _updateQuantity(index, item.quantity - 1),
-                                            icon: Icon(Icons.delete_outline, size: 18),
                                             constraints: BoxConstraints(minWidth: 32, minHeight: 32),
                                             padding: EdgeInsets.zero,
                                           ),

@@ -229,10 +229,10 @@ class _CartScreenState extends State<CartScreen> {
           // Product Image
           Container(
             width: 30,
-            height: 30,
+            height: 50,
             decoration: BoxDecoration(
-              color: Colors.red[100],
-              borderRadius: BorderRadius.circular(4),
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.circular(8),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -244,7 +244,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
           SizedBox(width: 16),
-
           // Product Details
           Expanded(
             child: Column(

@@ -15,9 +15,9 @@ class _ItemScreenState extends State<ItemScreen> {
 
   final List<MenuItem> menuItems = [
     MenuItem(
-      name: 'Coffee Latte',
+      name: 'Coffee Latte Rich and creamy coffee latte made withRich and creamy coffee latte made with',
       price: 6.90,
-      image: 'assets/images/coffee_latte.jpg',
+      image: 'assets/1.jpg',
       category: 'Popular',
       description:
           'Rich and creamy coffee latte made with premium espresso beans and steamed milk (For ref only)',
@@ -25,7 +25,7 @@ class _ItemScreenState extends State<ItemScreen> {
     MenuItem(
       name: 'Chicken Burger',
       price: 8.50,
-      image: 'assets/images/chicken_burger.jpg',
+      image: 'assets/2.jpg',
       category: 'Popular',
       description:
           'Juicy grilled chicken burger with fresh lettuce, tomato and special sauce (For ref only)',
@@ -33,7 +33,7 @@ class _ItemScreenState extends State<ItemScreen> {
     MenuItem(
       name: 'Pan Pizza Seafood (M)',
       price: 13.20,
-      image: 'assets/images/pepperoni_pizza.jpg',
+      image: 'assets/3.jpg',
       category: 'Popular',
       description:
           'Pan crust pizza topped with pizza sauce, cheese, shrimp, crab stick, squid, mussels and pineapple (For ref only)',
@@ -41,8 +41,16 @@ class _ItemScreenState extends State<ItemScreen> {
     MenuItem(
       name: 'Spaghetti Carbonara',
       price: 10.50,
-      image: 'assets/images/spaghetti_carbonara.jpg',
+      image: 'assets/4.jpg',
       category: 'Popular',
+      description:
+          'Classic Italian pasta with creamy sauce, bacon and parmesan cheese (For ref only)',
+    ),
+      MenuItem(
+      name: 'Spaghetti Carbonara',
+      price: 10.50,
+      image: 'assets/4.jpg',
+      category: 'Coffee',
       description:
           'Classic Italian pasta with creamy sauce, bacon and parmesan cheese (For ref only)',
     ),
@@ -50,7 +58,8 @@ class _ItemScreenState extends State<ItemScreen> {
 
   List<MenuItem> get filteredItems {
     if (selectedCategory == 'Popular') {
-      return menuItems;
+      // return menuItems;
+      return menuItems.where((item)=>item.category=='Popular').toList();
     }
     return menuItems
         .where((item) => item.category == selectedCategory)
@@ -742,7 +751,7 @@ class _ItemDetailModalState extends State<ItemDetailModal> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
