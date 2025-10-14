@@ -3,6 +3,7 @@ import '../home_screen.dart';
 import '../shop_screan.dart';
 import '../favorite_screen.dart';
 import '../setting_screen.dart';
+import 'package:test_form/create_sale_form.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -23,7 +24,7 @@ class CustomBottomNavigation extends StatelessWidget {
         targetScreen = const HomeScreen();
         break;
       case 1:
-        targetScreen = const ShopScreen();
+        targetScreen = const CreateSaleForm();
         break;
       case 2:
         targetScreen = const FavoritesScreen();

@@ -633,15 +633,15 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
-                        // onPressed: _showProductSelection,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ItemScreen(),
-                            ),
-                          );
-                        },
+                        onPressed: _showProductSelection,
+                        // onPressed: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => ItemScreen(),
+                        //     ),
+                        //   );
+                        // },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
