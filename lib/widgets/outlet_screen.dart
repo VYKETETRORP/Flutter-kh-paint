@@ -21,10 +21,12 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
   TextEditingController searchController = TextEditingController();
 
   @override
+
   void initState() {
     super.initState();
     filteredOutlets = widget.outlets;
   }
+
 
   void _filterOutlets(String query) {
     setState(() {
@@ -85,20 +87,20 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
-              // child: TextField(
-              //   controller: searchController,
-              //   onChanged: _filterOutlets,
-              //   decoration: InputDecoration(
-              //     hintText: 'Search',
-              //     hintStyle: TextStyle(color: Colors.grey[500]),
-              //     prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-              //     border: InputBorder.none,
-              //     contentPadding: EdgeInsets.symmetric(
-              //       horizontal: 16,
-              //       vertical: 12,
-              //     ),
-              //   ),
-              // ),
+              child: TextField(
+                controller: searchController,
+                onChanged: _filterOutlets,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
             ),
           ),
 
@@ -200,15 +202,15 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green[50],
+                                color: Colors.blue[50],
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.green[200]!),
+                                // border: Border.all(color: Colors.blue[300]!),
                               ),
                               child: Text(
                                 'Active',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.green[700],
+                                  color: Colors.blue[700],
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

@@ -17,12 +17,14 @@ class CreateSaleForm extends StatefulWidget {
 class _CreateSaleFormState extends State<CreateSaleForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _notesController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   // Form state
   DateTime _selectedDateTime = DateTime.now();
   models.Outlet? _selectedOutlet;
   List<models.Product> _selectedProducts = [];
   bool _isSubmitting = false;
+  List<models.Product> _filteredProducts = [];
 
   // Sample data
   final List<models.Outlet> _outlets = [
@@ -62,33 +64,35 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     ),
   ];
 
-  @override
+
+    @override
   void initState() {
     super.initState();
-    // Add initial products to match the screenshot
-    // _selectedProducts = [
-    //   models.Product(
-    //     id: '1',
-    //     code: '10110',
-    //     name: 'Premium Coffee Beans',
-    //     nameKhmer: 'កាហ្វេគ្រាប់ពិសេស',
-    //     price: 25.50,
-    //     quantity: 1,
-    //   ),
-    //   models.Product(
-    //     id: '2',
-    //     code: '10111',
-    //     name: 'Organic Tea Leaves',
-    //     nameKhmer: 'ស្លឹកតែធម្មជាតិ',
-    //     price: 18.75,
-    //     quantity: 1,
-    //   ),
-    // ];
+    // Initialize filtered products
+    _filteredProducts = _availableProducts;
+    
+    // Add initial products to match the screenshot (if needed)
+    // ... your existing initState code
+  }
+
+   void _filterProducts(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredProducts = _availableProducts;
+      } else {
+        _filteredProducts = _availableProducts
+            .where((product) =>
+                product.name.toLowerCase().contains(query.toLowerCase()) ||
+                product.code.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
   void dispose() {
     _notesController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -99,22 +103,23 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
       (sum, product) => sum + (product.price * product.quantity),
     );
   }
-void _showOutletSelection() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => OutletSelectionScreen(
-        outlets: _outlets,
-        selectedOutlet: _selectedOutlet,
-        onOutletSelected: (outlet) {
-          setState(() {
-            _selectedOutlet = outlet;
-          });
-        },
+
+  void _showOutletSelection() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OutletSelectionScreen(
+          outlets: _outlets,
+          selectedOutlet: _selectedOutlet,
+          onOutletSelected: (outlet) {
+            setState(() {
+              _selectedOutlet = outlet;
+            });
+          },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
   // void _showOutletSelection() {
   //   showModalBottomSheet(
   //     context: context,
@@ -183,7 +188,8 @@ void _showOutletSelection() {
 
   void _showProductSelection() {
     List<String> tempSelectedIds = _selectedProducts.map((p) => p.id).toList();
-
+ _filteredProducts = _availableProducts;
+    searchController.clear();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -239,6 +245,18 @@ void _showOutletSelection() {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: TextField(
+                          controller: searchController,
+                          onChanged: (query){
+                            setDialogState((){
+                              if(query.isEmpty){
+                                _filteredProducts = _availableProducts;
+                              }else{
+                                _filteredProducts= _availableProducts.where((product) => product.name.toLowerCase().contains(query.toLowerCase()) || product.code.toLowerCase().contains(query.toLowerCase())).toList();
+                              }
+
+                            });
+                          },
+
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Search',
@@ -266,9 +284,9 @@ void _showOutletSelection() {
                         color: Colors.black,
                         child: ListView.builder(
                           padding: EdgeInsets.symmetric(horizontal: 8),
-                          itemCount: _availableProducts.length,
+                          itemCount: _filteredProducts.length,
                           itemBuilder: (context, index) {
-                            final product = _availableProducts[index];
+                            final product = _filteredProducts[index];
                             final isSelected = tempSelectedIds.contains(
                               product.id,
                             );
@@ -276,7 +294,7 @@ void _showOutletSelection() {
                             return Container(
                               margin: EdgeInsets.only(
                                 bottom: 4,
-                              ), // ← Changed from 12 to 4
+                              ),
                               child: ListTile(
                                 onTap: () {
                                   setDialogState(() {
@@ -1116,7 +1134,7 @@ void _showOutletSelection() {
                         ),
                       ),
                     ],
-                    SizedBox(height: 100), 
+                    SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -1188,6 +1206,9 @@ void _showOutletSelection() {
       ),
     );
   }
+
+
+
 }
 
 // Usage example
