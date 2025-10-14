@@ -11,7 +11,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   List<CartItem> cartItems = [];
-  String selectedDelivery = 'Standard (5-20 mins)';
+  // String selectedDelivery = 'Standard (5-20 mins)';
 
   final List<PopularItem> popularItems = [
     PopularItem(
@@ -154,78 +154,8 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   SizedBox(height: 16),
 
-                  // Delivery info
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          child: Image.asset(
-                            'assets/images/delivery_bike.png',
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.pink[100],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.delivery_dining,
-                                  color: Colors.pink,
-                                  size: 30,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Estimated delivery',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              Text(
-                                selectedDelivery,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  // Show delivery options
-                                },
-                                child: Text(
-                                  'Change',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                 
 
-                  SizedBox(height: 24),
 
                   // Cart items
                   ...cartItems.asMap().entries.map((entry) {
@@ -335,7 +265,7 @@ class _CartScreenState extends State<CartScreen> {
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.pink,
+                                            color: Colors.red,
                                           ),
                                         ),
                                         if (item.originalPrice != null)
@@ -581,26 +511,14 @@ class _CartScreenState extends State<CartScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Total (incl. fees and tax)',
+                      'Total',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Show summary
-                      },
-                      child: Text(
-                        'See summary',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
+                  
                   ],
                 ),
                 Column(
@@ -611,7 +529,7 @@ class _CartScreenState extends State<CartScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink,
+                        color: Colors.red,
                       ),
                     ),
                     Text(
@@ -642,7 +560,7 @@ class _CartScreenState extends State<CartScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink,
+                  backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'cart_screen.dart';
+import 'item_screen.dart';
 import 'models.dart' as models;
 
 // Product model
@@ -258,7 +259,9 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                             );
 
                             return Container(
-  margin: EdgeInsets.only(bottom: 4), // ← Changed from 12 to 4
+                              margin: EdgeInsets.only(
+                                bottom: 4,
+                              ), // ← Changed from 12 to 4
                               child: ListTile(
                                 onTap: () {
                                   setDialogState(() {
@@ -630,7 +633,15 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
-                        onPressed: _showProductSelection,
+                        // onPressed: _showProductSelection,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ItemScreen(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
