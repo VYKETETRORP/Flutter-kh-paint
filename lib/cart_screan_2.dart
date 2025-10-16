@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_form/invoice_screen.dart';
 
 class CartScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -99,6 +100,7 @@ class _CartScreenState extends State<CartScreen> {
       SnackBar(
         content: Text('${item.name} added to cart'),
         duration: Duration(seconds: 1),
+        backgroundColor: Colors.green,
       ),
     );
   }
@@ -618,7 +620,7 @@ class _CartScreenState extends State<CartScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                CheckoutScreen(cartItems: cartItems),
+                                InvoiceScreen(),
                           ),
                         );
                       },
