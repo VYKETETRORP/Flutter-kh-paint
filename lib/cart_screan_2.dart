@@ -53,7 +53,10 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double get subtotal {
-    return cartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+    return cartItems.fold(
+      0.0,
+      (sum, item) => sum + (item.price * item.quantity),
+    );
   }
 
   double get total {
@@ -73,8 +76,10 @@ class _CartScreenState extends State<CartScreen> {
   void _addPopularItem(PopularItem item) {
     setState(() {
       // Check if item already exists in cart
-      int existingIndex = cartItems.indexWhere((cartItem) => cartItem.name == item.name);
-      
+      int existingIndex = cartItems.indexWhere(
+        (cartItem) => cartItem.name == item.name,
+      );
+
       if (existingIndex != -1) {
         cartItems[existingIndex].quantity += 1;
       } else {
@@ -122,10 +127,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             Text(
               'Black Canyon (Battambang)',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -158,7 +160,7 @@ class _CartScreenState extends State<CartScreen> {
                   ...cartItems.asMap().entries.map((entry) {
                     int index = entry.key;
                     CartItem item = entry.value;
-                    
+
                     return Container(
                       margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                       child: Row(
@@ -177,24 +179,37 @@ class _CartScreenState extends State<CartScreen> {
                                   ? Image.asset(
                                       item.image,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [Colors.orange[200]!, Colors.red[200]!],
-                                            ),
-                                          ),
-                                          child: Icon(Icons.local_cafe, color: Colors.white),
-                                        );
-                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  colors: [
+                                                    Colors.orange[200]!,
+                                                    Colors.red[200]!,
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.local_cafe,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          },
                                     )
                                   : Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
-                                          colors: [Colors.orange[200]!, Colors.red[200]!],
+                                          colors: [
+                                            Colors.orange[200]!,
+                                            Colors.red[200]!,
+                                          ],
                                         ),
                                       ),
-                                      child: Icon(Icons.local_cafe, color: Colors.white),
+                                      child: Icon(
+                                        Icons.local_cafe,
+                                        color: Colors.white,
+                                      ),
                                     ),
                             ),
                           ),
@@ -220,7 +235,9 @@ class _CartScreenState extends State<CartScreen> {
                                     // Quantity controls
                                     Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey[300]!),
+                                        border: Border.all(
+                                          color: Colors.grey[300]!,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Row(
@@ -229,9 +246,18 @@ class _CartScreenState extends State<CartScreen> {
                                           IconButton(
                                             icon: item.quantity > 1
                                                 ? Icon(Icons.remove, size: 18)
-                                                : Icon(Icons.delete_outline, size: 18),
-                                            onPressed: () => _updateQuantity(index, item.quantity - 1),
-                                            constraints: BoxConstraints(minWidth: 32, minHeight: 32),
+                                                : Icon(
+                                                    Icons.delete_outline,
+                                                    size: 18,
+                                                  ),
+                                            onPressed: () => _updateQuantity(
+                                              index,
+                                              item.quantity - 1,
+                                            ),
+                                            constraints: BoxConstraints(
+                                              minWidth: 32,
+                                              minHeight: 32,
+                                            ),
                                             padding: EdgeInsets.zero,
                                           ),
                                           Container(
@@ -246,9 +272,15 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                           ),
                                           IconButton(
-                                            onPressed: () => _updateQuantity(index, item.quantity + 1),
+                                            onPressed: () => _updateQuantity(
+                                              index,
+                                              item.quantity + 1,
+                                            ),
                                             icon: Icon(Icons.add, size: 18),
-                                            constraints: BoxConstraints(minWidth: 32, minHeight: 32),
+                                            constraints: BoxConstraints(
+                                              minWidth: 32,
+                                              minHeight: 32,
+                                            ),
                                             padding: EdgeInsets.zero,
                                           ),
                                         ],
@@ -257,7 +289,8 @@ class _CartScreenState extends State<CartScreen> {
                                     Spacer(),
                                     // Price
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
                                         Text(
                                           '\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
@@ -273,7 +306,8 @@ class _CartScreenState extends State<CartScreen> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey[500],
-                                              decoration: TextDecoration.lineThrough,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
                                             ),
                                           ),
                                       ],
@@ -296,10 +330,7 @@ class _CartScreenState extends State<CartScreen> {
                       icon: Icon(Icons.add, color: Colors.grey[700]),
                       label: Text(
                         'Add more items',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
                       ),
                     ),
                   ),
@@ -361,76 +392,106 @@ class _CartScreenState extends State<CartScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Image
                               Expanded(
                                 child: Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(12),
+                                    ),
                                     color: Colors.grey[200],
                                   ),
                                   child: Stack(
                                     children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          child: item.image.isNotEmpty
-                                              ? Image.asset(
-                                                  item.image,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error, stackTrace) {
-                                                    return Container(
-                                                      decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                          colors: [Colors.orange[200]!, Colors.red[200]!],
-                                                        ),
+                                      GestureDetector(
+                                        onTap: () => _addPopularItem(item),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(12),
+                                          ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            child: item.image.isNotEmpty
+                                                ? Image.asset(
+                                                    item.image,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Container(
+                                                            decoration: BoxDecoration(
+                                                              gradient: LinearGradient(
+                                                                colors: [
+                                                                  Colors
+                                                                      .orange[200]!,
+                                                                  Colors
+                                                                      .red[200]!,
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            child: Icon(
+                                                              Icons.restaurant,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 40,
+                                                            ),
+                                                          );
+                                                        },
+                                                  )
+                                                : Container(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        colors: [
+                                                          Colors.orange[200]!,
+                                                          Colors.red[200]!,
+                                                        ],
                                                       ),
-                                                      child: Icon(Icons.restaurant, color: Colors.white, size: 40),
-                                                    );
-                                                  },
-                                                )
-                                              : Container(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: [Colors.orange[200]!, Colors.red[200]!],
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.restaurant,
+                                                      color: Colors.white,
+                                                      size: 40,
                                                     ),
                                                   ),
-                                                  child: Icon(Icons.restaurant, color: Colors.white, size: 40),
-                                                ),
-                                        ),
-                                      ),
-                                      // Add button
-                                      Positioned(
-                                        bottom: 8,
-                                        right: 8,
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey.withOpacity(0.3),
-                                                spreadRadius: 1,
-                                                blurRadius: 3,
-                                              ),
-                                            ],
-                                          ),
-                                          child: IconButton(
-                                            onPressed: () => _addPopularItem(item),
-                                            padding: EdgeInsets.zero,
-                                            icon: Icon(Icons.add, size: 18),
                                           ),
                                         ),
+                                        // Add button,
                                       ),
+                                      // Positioned(
+                                      //   bottom: 8,
+                                      //   right: 8,
+                                      //   child: Container(
+                                      //     width: 32,
+                                      //     height: 32,
+                                      //     decoration: BoxDecoration(
+                                      //       color: Colors.white,
+                                      //       shape: BoxShape.circle,
+                                      //       boxShadow: [
+                                      //         BoxShadow(
+                                      //           color: Colors.grey.withOpacity(
+                                      //             0.3,
+                                      //           ),
+                                      //           spreadRadius: 1,
+                                      //           blurRadius: 3,
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //     child: IconButton(
+                                      //       onPressed: () =>
+                                      //           _addPopularItem(item),
+                                      //       padding: EdgeInsets.zero,
+                                      //       icon: Icon(Icons.add, size: 18),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
                               ),
-                              // Item details
                               Padding(
                                 padding: EdgeInsets.all(12),
                                 child: Column(
@@ -453,7 +514,8 @@ class _CartScreenState extends State<CartScreen> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey[500],
-                                              decoration: TextDecoration.lineThrough,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
                                             ),
                                           ),
                                         ],
@@ -517,7 +579,6 @@ class _CartScreenState extends State<CartScreen> {
                         color: Colors.black,
                       ),
                     ),
-                  
                   ],
                 ),
                 Column(
@@ -549,15 +610,18 @@ class _CartScreenState extends State<CartScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: cartItems.isEmpty ? null : () {
-                  // Navigate to checkout
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CheckoutScreen(cartItems: cartItems),
-                    ),
-                  );
-                },
+                onPressed: cartItems.isEmpty
+                    ? null
+                    : () {
+                        // Navigate to checkout
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CheckoutScreen(cartItems: cartItems),
+                          ),
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -568,10 +632,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 child: Text(
                   'Review payment and address',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -581,14 +642,21 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildProgressStep(int step, String title, bool isCompleted, bool isActive) {
+  Widget _buildProgressStep(
+    int step,
+    String title,
+    bool isCompleted,
+    bool isActive,
+  ) {
     return Column(
       children: [
         Container(
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: isCompleted ? Colors.black : (isActive ? Colors.grey[800] : Colors.grey[300]),
+            color: isCompleted
+                ? Colors.black
+                : (isActive ? Colors.grey[800] : Colors.grey[300]),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -655,12 +723,8 @@ class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Checkout'),
-      ),
-      body: Center(
-        child: Text('Checkout Screen - ${cartItems.length} items'),
-      ),
+      appBar: AppBar(title: Text('Checkout')),
+      body: Center(child: Text('Checkout Screen - ${cartItems.length} items')),
     );
   }
 }
