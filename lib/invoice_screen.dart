@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'cart_screan_2.dart';
 import 'map_screen.dart';
+import 'package:geolocator/geolocator.dart';
 
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
@@ -17,6 +18,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   bool _contactless = false;
   String _paymentMethod = "Cash";
   double _total = 10.81;
+
+  Future<void> _getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+    if (permission == LocationPermission.deniedForever) return;
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    setState(() {
+      _selectedLatLng = LatLng(position.latitude, position.longitude);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,59 +127,59 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ],
                 ),
                 SizedBox(height: 8),
-              Container(
-  height: 120,
-  width: double.infinity,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(8),
-    color: Colors.grey[200],
-  ),
-  child: GestureDetector(
-    onTap: () async {
-      final picked = await Navigator.push<LatLng>(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MapPickerScreen(
-            // initialPosition: _selectedLatLng!,
-          ),
-        ),
-      );
-      if (picked != null) {
-        setState(() => _selectedLatLng = picked);
-      }
-    },
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: _selectedLatLng!,
-          zoom: 16,
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId('address'),
-            position: _selectedLatLng!,
-          ),
-        },
-        zoomControlsEnabled: false,
-        myLocationButtonEnabled: false,
-        onTap: (pos) async {
-          final picked = await Navigator.push<LatLng>(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MapPickerScreen(
-                // initialPosition: pos,
-              ),
-            ),
-          );
-          if (picked != null) {
-            setState(() => _selectedLatLng = picked);
-          }
-        },
-      ),
-    ),
-  ),
-),
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey[200],
+                  ),
+                  child: GestureDetector(
+                    onTap: () async {
+                      final picked = await Navigator.push<LatLng>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapPickerScreen(
+                            // initialPosition: _selectedLatLng!,
+                          ),
+                        ),
+                      );
+                      if (picked != null) {
+                        setState(() => _selectedLatLng = picked);
+                      }
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: _selectedLatLng!,
+                          zoom: 16,
+                        ),
+                        markers: {
+                          Marker(
+                            markerId: MarkerId('address'),
+                            position: _selectedLatLng!,
+                          ),
+                        },
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
+                        onTap: (pos) async {
+                          final picked = await Navigator.push<LatLng>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MapPickerScreen(
+                                // initialPosition: pos,
+                              ),
+                            ),
+                          );
+                          if (picked != null) {
+                            setState(() => _selectedLatLng = picked);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 8),
                 Text(
                   _address,
@@ -205,6 +222,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     ),
                   ],
                 ),
+
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.my_location),
+                      label: Text('Use my location'),
+                      onPressed: _getCurrentLocation,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black87,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+                SizedBox(height: 8),
               ],
             ),
           ),

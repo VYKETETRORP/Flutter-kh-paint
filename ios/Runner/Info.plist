@@ -59,5 +59,7 @@
 <string>AIzaSyAlpSLS1jH1CjSRNOjwkprhe0vDrZ7s1CU</string>
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>We need your location to show the map.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to show the map.</string>
 </dict>
 </plist>
