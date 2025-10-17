@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'cart_screan_2.dart';
+import 'map_screen.dart';
 
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
@@ -92,41 +93,76 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     Spacer(),
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.black),
-                      onPressed: () {
-                        // TODO: Implement address edit
+                      onPressed: () async {
+                        final picked = await Navigator.push<LatLng>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapPickerScreen(
+                              // initialPosition: _selectedLatLng!,
+                            ),
+                          ),
+                        );
+                        if (picked != null) {
+                          setState(() => _selectedLatLng = picked);
+                        }
                       },
                     ),
                   ],
                 ),
                 SizedBox(height: 8),
-                Container(
-                  height: 120,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[200],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _selectedLatLng!,
-                        zoom: 16,
-                      ),
-                      markers: {
-                        Marker(
-                          markerId: MarkerId('address'),
-                          position: _selectedLatLng!,
-                        ),
-                      },
-                      zoomControlsEnabled: false,
-                      myLocationButtonEnabled: false,
-                      onTap: (pos) {
-                        setState(() => _selectedLatLng = pos);
-                      },
-                    ),
-                  ),
-                ),
+              Container(
+  height: 120,
+  width: double.infinity,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(8),
+    color: Colors.grey[200],
+  ),
+  child: GestureDetector(
+    onTap: () async {
+      final picked = await Navigator.push<LatLng>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MapPickerScreen(
+            // initialPosition: _selectedLatLng!,
+          ),
+        ),
+      );
+      if (picked != null) {
+        setState(() => _selectedLatLng = picked);
+      }
+    },
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: _selectedLatLng!,
+          zoom: 16,
+        ),
+        markers: {
+          Marker(
+            markerId: MarkerId('address'),
+            position: _selectedLatLng!,
+          ),
+        },
+        zoomControlsEnabled: false,
+        myLocationButtonEnabled: false,
+        onTap: (pos) async {
+          final picked = await Navigator.push<LatLng>(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MapPickerScreen(
+                // initialPosition: pos,
+              ),
+            ),
+          );
+          if (picked != null) {
+            setState(() => _selectedLatLng = picked);
+          }
+        },
+      ),
+    ),
+  ),
+),
                 SizedBox(height: 8),
                 Text(
                   _address,
@@ -142,7 +178,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       Expanded(
                         child: Text(
                           _note,
-                          style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                       Icon(Icons.keyboard_arrow_right, color: Colors.grey),
@@ -213,8 +252,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               children: [
                 Text(_paymentMethod, style: TextStyle(fontSize: 15)),
                 Spacer(),
-                Text("\$ ${_total.toStringAsFixed(2)}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                Text(
+                  "\$ ${_total.toStringAsFixed(2)}",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
               ],
             ),
           ),
@@ -256,8 +297,14 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               children: [
                 Text("Total (incl. VAT)", style: TextStyle(fontSize: 15)),
                 Spacer(),
-                Text("\$ ${_total.toStringAsFixed(2)}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.pink[700])),
+                Text(
+                  "\$ ${_total.toStringAsFixed(2)}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Colors.pink[700],
+                  ),
+                ),
               ],
             ),
           ),
@@ -309,7 +356,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           child: Center(
             child: Text(
               '$step',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

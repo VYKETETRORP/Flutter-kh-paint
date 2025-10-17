@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_form/invoice_screen.dart';
+import 'package:test_form/item_screen.dart';
 
 class CartScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -113,7 +114,7 @@ class _CartScreenState extends State<CartScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ItemScreen())),
           icon: Icon(Icons.close, color: Colors.black),
         ),
         title: Column(
