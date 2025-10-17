@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'cart_screan_2.dart';
+
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
 
@@ -8,17 +9,26 @@ class InvoiceScreen extends StatefulWidget {
   State<InvoiceScreen> createState() => _InvoiceScreenState();
 }
 
-class _InvoiceScreenState extends State<InvoiceScreen>{
-  LatLng? _selectedLatLng;
-    Widget build(BuildContext context) {
-    
+class _InvoiceScreenState extends State<InvoiceScreen> {
+  LatLng? _selectedLatLng = LatLng(11.562108, 104.888535); // Default Phnom Penh
+  String _address = "79 Kampuchea Krom Boulevard (128)\nPhnom Penh";
+  String _note = "Please bring it to my room";
+  bool _contactless = false;
+  String _paymentMethod = "Cash";
+  double _total = 10.81;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen())),
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CartScreen()),
+          ),
           icon: Icon(Icons.arrow_back, color: Colors.black),
         ),
         title: Text(
@@ -29,9 +39,12 @@ class _InvoiceScreenState extends State<InvoiceScreen>{
             color: Colors.black,
           ),
         ),
+        centerTitle: true,
       ),
-      body: Column(
+      body: ListView(
+        padding: EdgeInsets.zero,
         children: [
+          // Progress bar
           Container(
             padding: EdgeInsets.all(16),
             color: Colors.white,
@@ -41,144 +54,275 @@ class _InvoiceScreenState extends State<InvoiceScreen>{
                 Expanded(child: Container(height: 2, color: Colors.grey[300])),
                 _buildProgressStep(2, 'Cart', true, true),
                 Expanded(child: Container(height: 2, color: Colors.grey[300])),
-                _buildProgressStep(3, 'Invoice', true, false),
+                _buildProgressStep(3, 'Checkout', true, false),
               ],
             ),
           ),
-              GestureDetector(
-            onTap: () async {
-              final picked = await Navigator.push<LatLng?>(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MapPickerScreen(
-                    initialPosition: LatLng(11.562108, 104.888535),
+
+          // Delivery address card
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.location_on, color: Colors.black, size: 22),
+                    SizedBox(width: 8),
+                    Text(
+                      "Delivery address",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.black),
+                      onPressed: () {
+                        // TODO: Implement address edit
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey[200],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: _selectedLatLng!,
+                        zoom: 16,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: MarkerId('address'),
+                          position: _selectedLatLng!,
+                        ),
+                      },
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                      onTap: (pos) {
+                        setState(() => _selectedLatLng = pos);
+                      },
+                    ),
                   ),
                 ),
-              );
-              if (picked != null) {
-                setState(() => _selectedLatLng = picked);
-              }
-            },
-            child: Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Row(
-                children: [
-                  // simple map preview / icon
-                  Container(
-                    width: 80,
-                    height: 60,
-                    color: Colors.grey[200],
-                    child: _selectedLatLng == null
-                        ? Icon(Icons.map, color: Colors.grey)
-                        : Center(
-                            child: Text(
-                              'Lat\n${_selectedLatLng!.latitude.toStringAsFixed(4)}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ),
+                SizedBox(height: 8),
+                Text(
+                  _address,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Implement note edit
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _note,
+                          style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        ),
+                      ),
+                      Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                    ],
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: _selectedLatLng == null
-                        ? Text('Tap to select address', style: TextStyle(color: Colors.grey[700]))
-                        : Text('Lat: ${_selectedLatLng!.latitude.toStringAsFixed(6)}, Lng: ${_selectedLatLng!.longitude.toStringAsFixed(6)}'),
-                  ),
-                  Icon(Icons.keyboard_arrow_right, color: Colors.grey),
-                ],
-              ),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      "Contactless delivery:",
+                      style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                    ),
+                    Spacer(),
+                    Switch(
+                      value: _contactless,
+                      activeColor: Colors.red,
+                      onChanged: (val) {
+                        setState(() => _contactless = val);
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
-        
-      ),
-      
-    );
-  }
-}
 
-Widget _buildProgressStep(
-  int step,
-  String title,
-  bool isCompleted,
-  bool isActive,
-) {
-  return Column(
-    children: [
-      Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: isCompleted
-              ? Colors.black
-              : (isActive ? Colors.grey[800] : Colors.grey[300]),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Text(
-            '$step',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          // Payment method card
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.payment, color: Colors.red, size: 22),
+                SizedBox(width: 8),
+                Text(
+                  "Payment method",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.red[700],
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.red),
+                  onPressed: () {
+                    // TODO: Implement payment method edit
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Row(
+              children: [
+                Text(_paymentMethod, style: TextStyle(fontSize: 15)),
+                Spacer(),
+                Text("\$ ${_total.toStringAsFixed(2)}",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              ],
+            ),
+          ),
+          SizedBox(height: 16),
+
+          // Order summary card
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.receipt_long, color: Colors.red, size: 22),
+                SizedBox(width: 8),
+                Text(
+                  "Order summary",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.red[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Row(
+              children: [
+                Text("Total (incl. VAT)", style: TextStyle(fontSize: 15)),
+                Spacer(),
+                Text("\$ ${_total.toStringAsFixed(2)}",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.pink[700])),
+              ],
+            ),
+          ),
+          SizedBox(height: 24),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: ElevatedButton(
+            onPressed: () {
+              // TODO: Place order logic
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[700],
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              "Place order",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),
-      SizedBox(height: 4),
-      Text(
-        title,
-        style: TextStyle(
-          fontSize: 12,
-          color: isCompleted || isActive ? Colors.black : Colors.grey[500],
-          fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-        ),
-      ),
-    ],
-    
-  );
-}
-// In your InvoiceScreen widget
-LatLng? _selectedLatLng;
-
-void _pickLocation(BuildContext context) async {
-  final picked = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MapPickerScreen(
-        initialPosition: LatLng(11.562108, 104.888535), // Phnom Penh example
-      ),
-    ),
-  );
-  if (picked != null) {
-    // setState is not available in a non-State class, so handle accordingly
-    _selectedLatLng = picked;
-  }
-}
-
-// Dummy MapPickerScreen widget for demonstration
-class MapPickerScreen extends StatelessWidget {
-  final LatLng initialPosition;
-
-  const MapPickerScreen({Key? key, required this.initialPosition}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Replace this with your actual map picker implementation
-    return Scaffold(
-      appBar: AppBar(title: Text('Pick Location')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Return the picked location
-            Navigator.pop(context, initialPosition);
-          },
-          child: Text('Pick this location'),
-        ),
-      ),
     );
   }
 
+  Widget _buildProgressStep(
+    int step,
+    String title,
+    bool isCompleted,
+    bool isActive,
+  ) {
+    return Column(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: isCompleted
+                ? Colors.black87
+                : (isActive ? Colors.black54 : Colors.grey[300]),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              '$step',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: isCompleted || isActive ? Colors.black87 : Colors.grey[500],
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
 }
