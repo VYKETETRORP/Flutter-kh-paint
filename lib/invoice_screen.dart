@@ -115,7 +115,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => MapPickerScreen(
-                              // initialPosition: _selectedLatLng!,
+                              initialPosition: _selectedLatLng!,
                             ),
                           ),
                         );
@@ -140,7 +140,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => MapPickerScreen(
-                            // initialPosition: _selectedLatLng!,
+                            initialPosition: _selectedLatLng!,
                           ),
                         ),
                       );
@@ -168,7 +168,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MapPickerScreen(
-                                // initialPosition: pos,
+                                initialPosition: pos,
                               ),
                             ),
                           );
