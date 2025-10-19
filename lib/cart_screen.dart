@@ -23,7 +23,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  double get _deliveryFee => 5.0; // Fixed delivery fee
+  double get _deliveryFee => 5.0; 
 
   double get _total => _subtotal + _deliveryFee;
 
@@ -102,8 +102,8 @@ class _CartScreenState extends State<CartScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                Navigator.of(context).pop(); // Go back to previous screen
+                Navigator.of(context).pop(); 
+                Navigator.of(context).pop(); 
               },
               child: Text('OK'),
             ),
@@ -170,7 +170,7 @@ class _CartScreenState extends State<CartScreen> {
                         // Summary Section
                         _buildSummarySection(),
 
-                        SizedBox(height: 100), // Space for checkout button
+                        SizedBox(height: 100),
                       ],
                     ),
                   ),

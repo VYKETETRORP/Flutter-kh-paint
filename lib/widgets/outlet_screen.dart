@@ -61,20 +61,6 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       // Map view functionality
-        //     },
-        //     icon: Icon(Icons.map_outlined, color: Colors.white),
-        //   ),
-        //   IconButton(
-        //     onPressed: () {
-        //       // Add new outlet functionality
-        //     },
-        //     icon: Icon(Icons.add, color: Colors.white),
-        //   ),
-        // ],
       ),
       body: Column(
         children: [
@@ -185,7 +171,7 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
                                   ),
                                   SizedBox(height: 4),
                                   Text(
-                                    '+855135255556', // Sample phone number
+                                    '+855135255556', 
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey[600],
@@ -267,23 +253,7 @@ class _OutletSelectionScreenState extends State<OutletSelectionScreen> {
                               ),
                             ),
                             SizedBox(width: 8),
-                            // GestureDetector(
-                              // onTap: () {
-                                // Open map functionality
-                              // },
-                              // child: Container(
-                              //   padding: EdgeInsets.all(8),
-                              //   decoration: BoxDecoration(
-                              //     color: Colors.blue[50],
-                              //     borderRadius: BorderRadius.circular(8),
-                                // ),
-                                // child: Icon(
-                                //   Icons.map,
-                                //   color: Colors.blue,
-                                //   size: 20,
-                                // ),
-                              // ),
-                            // ),
+
                           ],
                         ),
 

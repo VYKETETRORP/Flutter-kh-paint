@@ -400,7 +400,7 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
           if (!kIsWeb) {
             _selectedImage = File(image.path);
           } else {
-            _selectedImage = null; // Web doesn't support File()
+            _selectedImage = null;
           }
           _selectedImageName = image.name.isNotEmpty
               ? image.name
@@ -576,10 +576,6 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
                         ],
                       ),
                       SizedBox(height: 8),
-                      // Text('📊 Total Illustrations: ${stats['total']}'),
-                      // Text('⭐ Featured: ${stats['featured']}'),
-                      // Text('📁 Regular: ${stats['regular']}'),
-                      // Text('📂 Categories: ${categories.length}'),
                     ],
                   ),
                 ),
@@ -944,109 +940,106 @@ class _AddIllustrationFormState extends State<AddIllustrationForm> {
     );
   }
 
-// Replace the _buildImageWidgetForList method around line 850
+  // Replace the _buildImageWidgetForList method around line 850
 
-Widget _buildImageWidgetForList(Illustration illustration) {
-  final imagePath = illustration.imagePath;
-  final imageName = illustration.imageName;
-  final isDefault = illustration.id.startsWith('default_');
+  Widget _buildImageWidgetForList(Illustration illustration) {
+    final imagePath = illustration.imagePath;
+    final imageName = illustration.imageName;
+    final isDefault = illustration.id.startsWith('default_');
 
-  // Priority 1: Real device image file
-  if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
-    final imageFile = File(imagePath);
-    if (imageFile.existsSync()) {
-      return Image.file(
-        imageFile,
+    // Priority 1: Real device image file
+    if (imagePath != null && imagePath.isNotEmpty && !kIsWeb) {
+      final imageFile = File(imagePath);
+      if (imageFile.existsSync()) {
+        return Image.file(
+          imageFile,
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildImagePlaceholderForList(imageName, isDefault);
+          },
+        );
+      }
+    }
+
+    // Priority 2: Network image (for testing)
+    if (imageName != null &&
+        (imageName.startsWith('http') || imageName.startsWith('https'))) {
+      return Image.network(
+        imageName,
         width: 50,
         height: 50,
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: 50,
+            height: 50,
+            child: Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
           return _buildImagePlaceholderForList(imageName, isDefault);
         },
       );
     }
+
+    // Always show placeholder for items without real images
+    return _buildImagePlaceholderForList(imageName, isDefault);
   }
 
-  // Priority 2: Network image (for testing)
-  if (imageName != null &&
-      (imageName.startsWith('http') || imageName.startsWith('https'))) {
-    return Image.network(
-      imageName,
+  Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
+    return Container(
       width: 50,
       height: 50,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Container(
-          width: 50,
-          height: 50,
-          child: Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDefault
+              ? [Colors.blue[100]!, Colors.blue[200]!]
+              : [Colors.orange[100]!, Colors.orange[200]!],
+        ),
+        borderRadius: BorderRadius.circular(8), // Add rounded corners
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image,
+            size: 20,
+            color: isDefault ? Colors.blue[600] : Colors.orange[600],
           ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return _buildImagePlaceholderForList(imageName, isDefault);
-      },
+          if (imageName != null && imageName.isNotEmpty) ...[
+            SizedBox(height: 2),
+            Text(
+              imageName.length > 8
+                  ? '${imageName.substring(0, 5)}...'
+                  : imageName,
+              style: TextStyle(
+                fontSize: 6,
+                color: isDefault ? Colors.blue[700] : Colors.orange[700],
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
-  // REMOVE the Asset image section completely - this was causing the error
-  // Always show placeholder for items without real images
-  return _buildImagePlaceholderForList(imageName, isDefault);
-}
-
-  // Build placeholder for list items
-// Also replace the _buildImagePlaceholderForList method
-
-Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
-  return Container(
-    width: 50,
-    height: 50,
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: isDefault
-            ? [Colors.blue[100]!, Colors.blue[200]!]
-            : [Colors.orange[100]!, Colors.orange[200]!],
-      ),
-      borderRadius: BorderRadius.circular(8), // Add rounded corners
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.image,
-          size: 20,
-          color: isDefault ? Colors.blue[600] : Colors.orange[600],
-        ),
-        if (imageName != null && imageName.isNotEmpty) ...[
-          SizedBox(height: 2),
-          Text(
-            imageName.length > 8
-                ? '${imageName.substring(0, 5)}...'
-                : imageName,
-            style: TextStyle(
-              fontSize: 6,
-              color: isDefault ? Colors.blue[700] : Colors.orange[700],
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ],
-    ),
-  );
-}
   // Show fallback options when image picker fails
   void _showFallbackOptions() {
     showDialog(
@@ -1614,9 +1607,7 @@ Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           _isEditMode ? 'Update Illustration' : 'Add Illustraion',
           style: TextStyle(
@@ -1774,8 +1765,7 @@ Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
 
                 // Description Field
                 TextFormField(
-                  controller:
-                      _descriptionController, // CHANGE from initialValue to controller
+                  controller: _descriptionController,
 
                   decoration: InputDecoration(
                     labelText: 'Description',
@@ -1860,12 +1850,7 @@ Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
 
                 SizedBox(height: 32),
 
-                // Replace the existing button section (around line 1960) with this:
-                SizedBox(height: 32),
-
-                // Button Row - Delete and Update side by side in edit mode
                 if (_isEditMode) ...[
-                  // Two buttons side by side for edit mode
                   Row(
                     children: [
                       // Delete Button (left side)
@@ -1900,7 +1885,7 @@ Widget _buildImagePlaceholderForList(String? imageName, bool isDefault) {
                         ),
                       ),
 
-                      SizedBox(width: 12), // Space between buttons
+                      SizedBox(width: 12), 
                       // Update Button (right side)
                       Expanded(
                         flex: 2, // Make update button wider

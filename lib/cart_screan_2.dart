@@ -13,7 +13,6 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   List<CartItem> cartItems = [];
-  // String selectedDelivery = 'Standard (5-20 mins)';
 
   final List<PopularItem> popularItems = [
     PopularItem(
@@ -62,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double get total {
-    return subtotal; // Add tax/fees calculation if needed
+    return subtotal; 
   }
 
   void _updateQuantity(int index, int newQuantity) {
@@ -596,7 +595,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     Text(
-                      '\$ ${(total * 1.1).toStringAsFixed(2)}', // Simulated original price
+                      '\$ ${(total * 1.1).toStringAsFixed(2)}', 
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[500],

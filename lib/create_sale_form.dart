@@ -74,8 +74,6 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
     // Initialize filtered products
     _filteredProducts = _availableProducts;
 
-    // Add initial products to match the screenshot (if needed)
-    // ... your existing initState code
   }
 
   void _filterProducts(String query) {
@@ -234,7 +232,7 @@ class _CreateSaleFormState extends State<CreateSaleForm> {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            SizedBox(width: 48), // Balance the close button
+                            SizedBox(width: 48), 
                           ],
                         ),
                       ),
