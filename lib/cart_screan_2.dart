@@ -620,7 +620,8 @@ class _CartScreenState extends State<CartScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                InvoiceScreen(total : total),
+                                InvoiceScreen(total : total,      cartItems: cartItems, // Pass the current cart items
+),
                           ),
                         );
                       },

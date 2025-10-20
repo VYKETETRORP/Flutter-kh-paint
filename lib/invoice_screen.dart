@@ -7,8 +7,9 @@ import 'package:geocoding/geocoding.dart';
 
 class InvoiceScreen extends StatefulWidget {
     final double total;
+      final List<CartItem> cartItems;
 
-  const InvoiceScreen({super.key, required this.total});
+  const InvoiceScreen({super.key, required this.total, required this.cartItems});
 
   @override
   State<InvoiceScreen> createState() => _InvoiceScreenState();
@@ -69,7 +70,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         leading: IconButton(
           onPressed: () => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => CartScreen()),
+            MaterialPageRoute(builder: (context) => CartScreen(cartItems: widget.cartItems)),
           ),
           icon: Icon(Icons.arrow_back, color: Colors.black),
         ),
