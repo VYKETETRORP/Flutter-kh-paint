@@ -12,6 +12,7 @@ import 'package:test_form/widgets/outlet_screen.dart';
 // import 'cart_screan_2.dart';
 import 'item_screen.dart';
 import 'invoice_screen.dart';
+import 'payment_method_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final languageService = LanguageService();
@@ -44,7 +45,7 @@ class MyProgram extends StatelessWidget {
               ),
             ),
             // home: const InvoiceScreen(total: 10.81),
-            home: const ItemScreen(),
+            home: const CreateSaleForm(),
             // You can add routes here if needed
             // routes: {
             //   '/add-illustration': (context) => AddIllustrationForm(),

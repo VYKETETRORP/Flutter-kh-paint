@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'cart_screan_2.dart';
 import 'map_screen.dart';
+import 'payment_method_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -421,7 +422,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           padding: EdgeInsets.all(16),
           child: ElevatedButton(
             onPressed: () {
-              // TODO: Place order logic
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PaymentMethodScreen()));
+
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[700],
