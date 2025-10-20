@@ -3,9 +3,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'cart_screan_2.dart';
 import 'map_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class InvoiceScreen extends StatefulWidget {
-  const InvoiceScreen({super.key});
+    final double total;
+
+  const InvoiceScreen({super.key, required this.total});
 
   @override
   State<InvoiceScreen> createState() => _InvoiceScreenState();
@@ -17,7 +20,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   String _note = "Please bring it to my room";
   bool _contactless = false;
   String _paymentMethod = "Cash";
-  double _total = 10.81;
 
   Future<void> _getCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -30,9 +32,31 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-    setState(() {
-      _selectedLatLng = LatLng(position.latitude, position.longitude);
-    });
+
+    // Open map picker centered on current location
+    final picked = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapPickerScreen(
+          initialPosition: LatLng(position.latitude, position.longitude),
+        ),
+      ),
+    );
+    if (picked != null) {
+      // Get address from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        picked.latitude,
+        picked.longitude,
+      );
+      String address = placemarks.isNotEmpty
+          ? "${placemarks.first.street}, ${placemarks.first.locality}, ${placemarks.first.country}"
+          : "${picked.latitude}, ${picked.longitude}";
+
+      setState(() {
+        _selectedLatLng = picked;
+        _address = address;
+      });
+    }
   }
 
   @override
@@ -108,22 +132,41 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       ),
                     ),
                     Spacer(),
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.black),
-                      onPressed: () async {
-                        final picked = await Navigator.push<LatLng>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MapPickerScreen(
-                              initialPosition: _selectedLatLng!,
-                            ),
-                          ),
-                        );
-                        if (picked != null) {
-                          setState(() => _selectedLatLng = picked);
-                        }
-                      },
-                    ),
+                    // IconButton(
+                    //   icon: Icon(Icons.edit, color: Colors.black),
+                    //   // For edit icon and map tap
+                    //   onPressed: () async {
+                    //     // Always get the latest current location before opening the picker
+                    //     Position position = await Geolocator.getCurrentPosition(
+                    //       desiredAccuracy: LocationAccuracy.high,
+                    //     );
+                    //     final picked = await Navigator.push<LatLng>(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => MapPickerScreen(
+                    //           initialPosition: LatLng(
+                    //             position.latitude,
+                    //             position.longitude,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //     if (picked != null) {
+                    //       List<Placemark> placemarks =
+                    //           await placemarkFromCoordinates(
+                    //             picked.latitude,
+                    //             picked.longitude,
+                    //           );
+                    //       String address = placemarks.isNotEmpty
+                    //           ? "${placemarks.first.street}, ${placemarks.first.locality}, ${placemarks.first.country}"
+                    //           : "${picked.latitude}, ${picked.longitude}";
+                    //       setState(() {
+                    //         _selectedLatLng = picked;
+                    //         _address = address;
+                    //       });
+                    //     }
+                    //   },
+                    // ),
                   ],
                 ),
                 SizedBox(height: 8),
@@ -136,44 +179,73 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                   ),
                   child: GestureDetector(
                     onTap: () async {
+                      // Open the map picker at the current selected location
                       final picked = await Navigator.push<LatLng>(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MapPickerScreen(
-                            initialPosition: _selectedLatLng!,
+                            initialPosition:
+                                _selectedLatLng ??
+                                LatLng(11.562108, 104.888535),
                           ),
                         ),
                       );
                       if (picked != null) {
-                        setState(() => _selectedLatLng = picked);
+                        // Get address from coordinates
+                        List<Placemark> placemarks =
+                            await placemarkFromCoordinates(
+                              picked.latitude,
+                              picked.longitude,
+                            );
+                        String address = placemarks.isNotEmpty
+                            ? "${placemarks.first.street}, ${placemarks.first.locality}, ${placemarks.first.country}"
+                            : "${picked.latitude}, ${picked.longitude}";
+                        setState(() {
+                          _selectedLatLng = picked;
+                          _address = address;
+                        });
                       }
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: GoogleMap(
                         initialCameraPosition: CameraPosition(
-                          target: _selectedLatLng!,
+                          target:
+                              _selectedLatLng ?? LatLng(11.562108, 104.888535),
                           zoom: 16,
                         ),
                         markers: {
                           Marker(
                             markerId: MarkerId('address'),
-                            position: _selectedLatLng!,
+                            position:
+                                _selectedLatLng ??
+                                LatLng(11.562108, 104.888535),
                           ),
                         },
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         onTap: (pos) async {
+                          // Optional: let user tap on map to open picker at tapped position
                           final picked = await Navigator.push<LatLng>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MapPickerScreen(
-                                initialPosition: pos,
-                              ),
+                              builder: (context) =>
+                                  MapPickerScreen(initialPosition: pos),
                             ),
                           );
                           if (picked != null) {
-                            setState(() => _selectedLatLng = picked);
+                            List<Placemark> placemarks =
+                                await placemarkFromCoordinates(
+                                  picked.latitude,
+                                  picked.longitude,
+                                );
+                            String address = placemarks.isNotEmpty
+                                ? "${placemarks.first.street}, ${placemarks.first.locality}, ${placemarks.first.country}"
+                                : "${picked.latitude}, ${picked.longitude}";
+                            setState(() {
+                              _selectedLatLng = picked;
+                              _address = address;
+                            });
                           }
                         },
                       ),
@@ -222,21 +294,20 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     ),
                   ],
                 ),
-
-                Row(
-                  children: [
-                    ElevatedButton.icon(
-                      icon: Icon(Icons.my_location),
-                      label: Text('Use my location'),
-                      onPressed: _getCurrentLocation,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    Spacer(),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     ElevatedButton.icon(
+                //       icon: Icon(Icons.my_location),
+                //       label: Text('Use my location'),
+                //       onPressed: _getCurrentLocation,
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: Colors.black87,
+                //         foregroundColor: Colors.white,
+                //       ),
+                //     ),
+                //     Spacer(),
+                //   ],
+                // ),
                 SizedBox(height: 8),
               ],
             ),
@@ -286,7 +357,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 Text(_paymentMethod, style: TextStyle(fontSize: 15)),
                 Spacer(),
                 Text(
-                  "\$ ${_total.toStringAsFixed(2)}",
+                  "\$ ${widget.total.toStringAsFixed(2)}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
               ],
@@ -331,7 +402,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 Text("Total (incl. VAT)", style: TextStyle(fontSize: 15)),
                 Spacer(),
                 Text(
-                  "\$ ${_total.toStringAsFixed(2)}",
+                  "\$ ${widget.total.toStringAsFixed(2)}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,

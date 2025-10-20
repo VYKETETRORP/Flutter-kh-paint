@@ -43,8 +43,8 @@ class MyProgram extends StatelessWidget {
                 elevation: 0,
               ),
             ),
-            home: const InvoiceScreen
-            (),
+            // home: const InvoiceScreen(total: 10.81),
+            home: const ItemScreen(),
             // You can add routes here if needed
             // routes: {
             //   '/add-illustration': (context) => AddIllustrationForm(),

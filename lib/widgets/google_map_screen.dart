@@ -4,7 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class MapPickerScreen extends StatefulWidget {
   final LatLng initialPosition;
 
-  const MapPickerScreen({Key? key, required this.initialPosition}) : super(key: key);
+  const MapPickerScreen({Key? key, required this.initialPosition})
+    : super(key: key);
 
   @override
   State<MapPickerScreen> createState() => _MapPickerScreenState();
@@ -18,6 +19,8 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     super.initState();
     _pickedPosition = widget.initialPosition;
   }
+
+  LatLng cambodiaLatLng = LatLng(11.562108, 104.888535); // Phnom Penh, Cambodia
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +39,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               });
             },
             markers: {
-              Marker(
-                markerId: MarkerId('picked'),
-                position: _pickedPosition,
-              ),
+              Marker(markerId: MarkerId('picked'), position: _pickedPosition),
             },
           ),
           Positioned(
@@ -48,7 +48,13 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             right: 24,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, _pickedPosition);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        MapPickerScreen(initialPosition: cambodiaLatLng),
+                  ),
+                );
               },
               child: Text('Confirm Location'),
             ),
